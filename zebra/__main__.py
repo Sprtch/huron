@@ -1,5 +1,5 @@
 #!/usr/bin/python3.6
-
+import logging
 import asyncio
 from aioconsole import ainput
 # import aiohttp
@@ -15,6 +15,7 @@ env = Environment(
 try:
     scanner_device = InputDevice('/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd')
 except FileNotFoundError:
+    logging.warning("No scanner found: Launching the application on terminal mode.")
     scanner_device = None
 
 # Make the keyboard mapping between the scandata received from evdev and the
@@ -44,7 +45,7 @@ async def process_barcode(queue):
         file.write(str(template.render(name='This is a test', number=barcode)))
         file.close()
 
-        print("Launching the print of the barcode: %s" % (barcode))
+        logging.info("Launching the print of the barcode: %s" % (barcode))
 
         sp.check_output(['lpr', '-P', 'zebra', '-o', 'raw', filename])
 
