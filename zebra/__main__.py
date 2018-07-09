@@ -7,16 +7,25 @@ from jinja2 import Environment, PackageLoader
 from evdev import InputDevice, categorize, ecodes
 import subprocess as sp
 import signal
+import os
+from quart import Quart, render_template, redirect, request, url_for
 
+# Flask Init
+app = Quart(__name__)
+
+# Jinja2 Init
 env = Environment(
     loader=PackageLoader(__name__, 'templates')
 )
 
-try:
-    scanner_device = InputDevice('/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd')
-except FileNotFoundError:
-    logging.warning("No scanner found: Launching the application on terminal mode.")
-    scanner_device = None
+# Scanner init
+# SCANNER_DEV = None
+# try:
+#     SCANNER_DEV = InputDevice(USB_SCANNER_PATH)
+# except FileNotFoundError:
+#     logging.warning("No scanner found: Launching the application on terminal mode.")
+
+BARCODE_QUEUE = asyncio.Queue(loop=asyncio.get_event_loop())
 
 # Make the keyboard mapping between the scandata received from evdev and the
 # actual value on the keyboard (should be qwerty).
@@ -35,9 +44,33 @@ KEYBOARD_MAPPING = {
     28: 'ENTER',
 }
 
-async def process_barcode(queue):
+@app.route('/')
+def main():
+    return render_template('html/index.html')
+
+@app.route('/print', methods=['POST'])
+async def create():
+    form = await request.form
+    barcode = form["barcode"]
+    await BARCODE_QUEUE.put(barcode)
+    return redirect(url_for('main'))
+
+def usb_scanner_checker():
+    USB_SCANNER_PATH = "/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd"
+    dev = None
     while True:
-        barcode = await queue.get()
+        if os.path.exists(USB_SCANNER_PATH):
+            logging.info("Plugged barcode scanner")
+            dev = InputDevice(USB_SCANNER_PATH)
+        else:
+            logging.warning("Still no barcode scanner plugged")
+            dev = None
+
+        yield dev
+
+async def process_barcode():
+    while True:
+        barcode = await BARCODE_QUEUE.get()
         template = env.get_template('productbarcode40x100.zpl')
 
         filename = '/tmp/%s.zpl' % (barcode)
@@ -49,39 +82,51 @@ async def process_barcode(queue):
 
         sp.check_output(['lpr', '-P', 'zebra', '-o', 'raw', filename])
 
-async def input_listener(queue):
+async def input_listener():
     while True:
         barcode = await ainput(">>>")
-        await queue.put(barcode)
+        await BARCODE_QUEUE.put(barcode)
 
-async def barcode_scanner_listener(queue, dev):
-    dev.grab()
+async def barcode_scanner_listener():
     barcode = ''
-    async for ev in dev.async_read_loop():
-        if ev.type == ecodes.EV_KEY:
-            data = categorize(ev)
-            key = KEYBOARD_MAPPING.get(data.scancode, None)
-            if  key == None or key == 'ENTER':
-                await queue.put(barcode)
-                barcode = ''
-                break
-            if data.keystate == 1:
-                barcode += str(key)
-    dev.ungrab()
+    g = usb_scanner_checker()
+    for dev in g:
+        if dev is None:
+            await asyncio.sleep(5)
+            continue
+        try:
+            dev.grab()
+            async for ev in dev.async_read_loop():
+                if ev.type == ecodes.EV_KEY:
+                    data = categorize(ev)
+                    key = KEYBOARD_MAPPING.get(data.scancode, None)
+                    if  key == None or key == 'ENTER':
+                        await BARCODE_QUEUE.put(barcode)
+                        barcode = ''
+                        break
+                    if data.keystate == 1:
+                        barcode += str(key)
+            dev.ungrab()
+        except OSError:
+            logging.warning("Barcode scanner just disconnected")
+
 
 def main():
     loop = asyncio.get_event_loop()
-    q = asyncio.Queue(loop=loop)
 
-    if scanner_device:
-        loop.run_until_complete(asyncio.gather(barcode_scanner_listener(q, scanner_device), process_barcode(q)))
-    else:
-        loop.run_until_complete(asyncio.gather(input_listener(q), process_barcode(q)))
+    loop.create_task(barcode_scanner_listener())
+    loop.create_task(input_listener())
+    loop.create_task(process_barcode())
+    loop.create_task(process_barcode())
+
+    app.run(debug=True, loop=loop)
     loop.close()
 
 def cleaning(signumb, frame):
-    if scanner_device:
-        scanner_device.ungrab()
+    # if SCANNER_DEV:
+    #     SCANNER_DEV.ungrab()
+    loop = asyncio.get_event_loop()
+    loop.close()
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, cleaning)

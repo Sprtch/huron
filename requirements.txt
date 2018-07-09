@@ -3,3 +3,4 @@ aiohttp
 Jinja2
 aioconsole
 evdev
+Quart
