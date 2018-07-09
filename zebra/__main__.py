@@ -18,13 +18,6 @@ env = Environment(
     loader=PackageLoader(__name__, 'templates')
 )
 
-# Scanner init
-# SCANNER_DEV = None
-# try:
-#     SCANNER_DEV = InputDevice(USB_SCANNER_PATH)
-# except FileNotFoundError:
-#     logging.warning("No scanner found: Launching the application on terminal mode.")
-
 BARCODE_QUEUE = asyncio.Queue(loop=asyncio.get_event_loop())
 
 # Make the keyboard mapping between the scandata received from evdev and the
@@ -115,16 +108,13 @@ def main():
     loop = asyncio.get_event_loop()
 
     loop.create_task(barcode_scanner_listener())
-    loop.create_task(input_listener())
-    loop.create_task(process_barcode())
+    # loop.create_task(input_listener())
     loop.create_task(process_barcode())
 
     app.run(debug=True, loop=loop)
     loop.close()
 
 def cleaning(signumb, frame):
-    # if SCANNER_DEV:
-    #     SCANNER_DEV.ungrab()
     loop = asyncio.get_event_loop()
     loop.close()
 
