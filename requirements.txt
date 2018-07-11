@@ -4,5 +4,6 @@ Jinja2
 aioconsole
 evdev
 Quart
+PyYAML>=4.2b4
 git+https://github.com/Supervisor/supervisor
 superfsmon
