@@ -48,6 +48,14 @@ async def create():
     await BARCODE_QUEUE.put(barcode)
     return redirect(url_for('main'))
 
+@app.route('/update', methods=['POST'])
+async def update():
+    try:
+        sp.check_output(['git', 'pull', 'origin', 'master'])
+    except:
+        logger.error("No repository settled up")
+    return redirect(url_for('main'))
+
 def usb_scanner_checker():
     USB_SCANNER_PATH = "/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd"
     dev = None

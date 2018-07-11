@@ -4,3 +4,5 @@ Jinja2
 aioconsole
 evdev
 Quart
+git+https://github.com/Supervisor/supervisor
+superfsmon
