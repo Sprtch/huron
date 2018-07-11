@@ -68,7 +68,7 @@ async def process_barcode():
 
         filename = '/tmp/%s.zpl' % (barcode)
         file = open(filename, 'w')
-        file.write(str(template.render(name='This is a test', number=barcode)))
+        file.write(str(template.render(name='Barcode', number=barcode))) # Get part name from database.
         file.close()
 
         logging.info("Launching the print of the barcode: %s" % (barcode))
