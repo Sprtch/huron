@@ -10,7 +10,7 @@ import signal
 import os
 from quart import Quart, render_template, redirect, request, url_for
 
-logging.basicConfig(filename='example.log',level=logging.DEBUG)
+logging.basicConfig(filename='zebra.log',level=logging.DEBUG)
 
 # Flask Init
 app = Quart(__name__)
