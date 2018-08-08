@@ -47,7 +47,15 @@ def main():
 async def create():
     form = await request.form
     barcode = form["barcode"]
-    await BARCODE_QUEUE.put(barcode)
+    number = form["number"]
+
+    if number.isdigit():
+        number = int(number)
+    else:
+        number = 1
+
+    for _ in range(number):
+        await BARCODE_QUEUE.put(barcode)
     return redirect(url_for('main'))
 
 @app.route('/update', methods=['POST'])

@@ -37,6 +37,9 @@
             <input type="text" name="barcode" class="form-control" id="barcodeInput" aria-describedby="barcodeHelp" placeholder="Enter barcode">
             <small id="barcodeHelp" class="form-text text-muted"></small>
           </div>
+          <div class="mb-2">
+            <input type="number" name="number" class="form-control" step="1" placeholder="Number">
+          </div>
           <button type="submit" class="btn btn-primary mb-2">Print</button>
         </form>
         <form action="/update" class="form-inline" method="post">
