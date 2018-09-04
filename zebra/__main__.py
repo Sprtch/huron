@@ -9,8 +9,10 @@ import subprocess as sp
 import signal
 import os
 from quart import Quart, render_template, redirect, request, url_for
+from models.part import Part
+from models.database import db_session
 
-logging.basicConfig(filename='/var/log/zebra.log',level=logging.DEBUG)
+logging.basicConfig(filename='/var/log/zebra.log', level=logging.DEBUG)
 
 # Flask Init
 app = Quart(__name__)
@@ -39,9 +41,16 @@ KEYBOARD_MAPPING = {
     28: 'ENTER',
 }
 
+
+@app.route('/part')
+def part():
+    return render_template('html/part.html', parts=Part.query.all())
+
+
 @app.route('/')
-def main():
+def index():
     return render_template('html/index.html')
+
 
 @app.route('/print', methods=['POST'])
 async def create():
@@ -56,7 +65,33 @@ async def create():
 
     for _ in range(number):
         await BARCODE_QUEUE.put(barcode)
-    return redirect(url_for('main'))
+    return redirect(url_for('index'))
+
+
+@app.route('/part/import', methods=['POST'])
+async def add_part_import():
+    # form = await request.form
+    # name = form["name"]
+    # barcode = form["barcode"]
+    #
+    # part = Part(name=name, barcode=barcode)
+    # db_session.add(part)
+    # db_session.commit()
+    return redirect(url_for('part'))
+
+
+@app.route('/part/add', methods=['POST'])
+async def add_part():
+    form = await request.form
+    name = form["name"]
+    barcode = form["barcode"]
+
+    part = Part(name=name, barcode=barcode)
+    db_session.add(part)
+    db_session.commit()
+
+    return redirect(url_for('part'))
+
 
 @app.route('/update', methods=['POST'])
 async def update():
@@ -64,7 +99,8 @@ async def update():
         sp.check_output(['git', 'pull', 'origin', 'master'])
     except:
         logger.error("No repository settled up")
-    return redirect(url_for('main'))
+    return redirect(url_for('index'))
+
 
 def usb_scanner_checker():
     USB_SCANNER_PATH = "/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd"
@@ -79,6 +115,7 @@ def usb_scanner_checker():
 
         yield dev
 
+
 async def process_barcode():
     while True:
         barcode = await BARCODE_QUEUE.get()
@@ -86,17 +123,20 @@ async def process_barcode():
 
         filename = '/tmp/%s.zpl' % (barcode)
         file = open(filename, 'w')
-        file.write(str(template.render(name='Barcode', number=barcode))) # Get part name from database.
+        # Get part name from database.
+        file.write(str(template.render(name='Barcode', number=barcode)))
         file.close()
 
         logging.info("Launching the print of the barcode: %s" % (barcode))
 
         sp.check_output(['lpr', '-P', 'zebra', '-o', 'raw', filename])
 
+
 async def input_listener():
     while True:
         barcode = await ainput(">>>")
         await BARCODE_QUEUE.put(barcode)
+
 
 async def barcode_scanner_listener():
     barcode = ''
@@ -111,7 +151,7 @@ async def barcode_scanner_listener():
                 if ev.type == ecodes.EV_KEY:
                     data = categorize(ev)
                     key = KEYBOARD_MAPPING.get(data.scancode, None)
-                    if  key == None or key == 'ENTER':
+                    if key == None or key == 'ENTER':
                         await BARCODE_QUEUE.put(barcode)
                         barcode = ''
                         break
@@ -132,9 +172,11 @@ def main():
     app.run(debug=True, loop=loop)
     loop.close()
 
+
 def cleaning(signumb, frame):
     loop = asyncio.get_event_loop()
     loop.close()
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, cleaning)
