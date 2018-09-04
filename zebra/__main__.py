@@ -15,7 +15,11 @@ from models.database import db_session
 logging.basicConfig(filename='/var/log/zebra.log', level=logging.DEBUG)
 
 # Flask Init
-app = Quart(__name__)
+app = Quart(
+    __name__,
+    static_folder="app/build/static",
+    template_folder="app/build/",
+)
 
 # Jinja2 Init
 env = Environment(

@@ -1,0 +1,23 @@
+main {
+  padding-top: 70px;
+}
+
+.form-inline div {
+  padding-right: 10px;
+}
+
+.form-inline div label {
+  padding-right: 5px;
+}
+
+.card {
+  margin: 10px;
+}
+
+.manual-input-card .card-header {
+  background: #8ac4b7;
+}
+
+.code-update-card .card-header {
+  background: #CD5C5C;
+}
