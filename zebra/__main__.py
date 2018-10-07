@@ -8,11 +8,12 @@ from evdev import InputDevice, categorize, ecodes
 import subprocess as sp
 import signal
 import os
-from quart import Quart, render_template, redirect, request, url_for
+from quart import Quart, render_template, redirect, request, url_for, jsonify
 from models.part import Part
-from models.database import db_session
+from models.database import db_session, init_db
 
-logging.basicConfig(filename='/var/log/zebra.log', level=logging.DEBUG)
+# logging.basicConfig(filename='/var/log/zebra.log', level=logging.DEBUG)
+init_db()
 
 # Flask Init
 app = Quart(
@@ -45,16 +46,9 @@ KEYBOARD_MAPPING = {
     28: 'ENTER',
 }
 
-
-@app.route('/part')
-def part():
-    return render_template('html/part.html', parts=Part.query.all())
-
-
 @app.route('/')
 def index():
-    return render_template('html/index.html')
-
+    return render_template('index.html')
 
 @app.route('/print', methods=['POST'])
 async def create():
@@ -71,31 +65,35 @@ async def create():
         await BARCODE_QUEUE.put(barcode)
     return redirect(url_for('index'))
 
+def is_csv(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() == 'csv'
 
-@app.route('/part/import', methods=['POST'])
-async def add_part_import():
-    # form = await request.form
-    # name = form["name"]
-    # barcode = form["barcode"]
-    #
-    # part = Part(name=name, barcode=barcode)
-    # db_session.add(part)
-    # db_session.commit()
-    return redirect(url_for('part'))
+@app.route('/api/parts', methods=['GET', 'POST'])
+async def api_parts():
+    if request.method == 'POST':
+        if 'file' in request.files:
+            file = request.files['file']
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and is_csv(file.filename):
+                pass
+                # TODO Parse csv
+                # filename = secure_filename(file.filename)
+                # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # return redirect(url_for('uploaded_file',
+                #                         filename=filename))
 
-
-@app.route('/part/add', methods=['POST'])
-async def add_part():
-    form = await request.form
-    name = form["name"]
-    barcode = form["barcode"]
-
-    part = Part(name=name, barcode=barcode)
-    db_session.add(part)
-    db_session.commit()
-
-    return redirect(url_for('part'))
-
+        else:
+            form = await request.form
+            name = form["name"]
+            barcode = form["barcode"]
+            part = Part(name=name, barcode=barcode)
+            db_session.add(part)
+            db_session.commit()
+        return redirect(request.url)
+    return jsonify([x.to_dict() for x in db_session.query(Part).all()])
 
 @app.route('/update', methods=['POST'])
 async def update():
@@ -104,7 +102,6 @@ async def update():
     except:
         logger.error("No repository settled up")
     return redirect(url_for('index'))
-
 
 def usb_scanner_checker():
     USB_SCANNER_PATH = "/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd"
