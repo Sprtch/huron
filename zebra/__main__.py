@@ -52,9 +52,12 @@ def index():
 
 @app.route('/print', methods=['POST'])
 async def create():
-    form = await request.form
+    form = await request.get_json()
+    if form is None:
+        form = await request.form
     barcode = form["barcode"]
-    number = form["number"]
+    name = form.get("name", "")
+    number = form.get("number", "1")
 
     if number.isdigit():
         number = int(number)
@@ -62,7 +65,7 @@ async def create():
         number = 1
 
     for _ in range(number):
-        await BARCODE_QUEUE.put(barcode)
+        await BARCODE_QUEUE.put({"barcode": barcode, "name": name})
     return redirect(url_for('index'))
 
 def is_csv(filename):
@@ -84,7 +87,6 @@ async def api_parts():
                 # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 # return redirect(url_for('uploaded_file',
                 #                         filename=filename))
-
         else:
             form = await request.form
             name = form["name"]
@@ -119,16 +121,16 @@ def usb_scanner_checker():
 
 async def process_barcode():
     while True:
-        barcode = await BARCODE_QUEUE.get()
+        info = await BARCODE_QUEUE.get()
         template = env.get_template('productbarcode40x100.zpl')
 
-        filename = '/tmp/%s.zpl' % (barcode)
+        filename = '/tmp/%s.zpl' % (info['barcode'])
         file = open(filename, 'w')
         # Get part name from database.
-        file.write(str(template.render(name='Barcode', number=barcode)))
+        file.write(str(template.render(name=info.get('name', ''), number=info['barcode'])))
         file.close()
 
-        logging.info("Launching the print of the barcode: %s" % (barcode))
+        logging.info("Launching the print of the barcode: %s" % (info['barcode']))
 
         sp.check_output(['lpr', '-P', 'zebra', '-o', 'raw', filename])
 
@@ -136,7 +138,7 @@ async def process_barcode():
 async def input_listener():
     while True:
         barcode = await ainput(">>>")
-        await BARCODE_QUEUE.put(barcode)
+        await BARCODE_QUEUE.put({"barcode": barcode})
 
 
 async def barcode_scanner_listener():
@@ -153,7 +155,7 @@ async def barcode_scanner_listener():
                     data = categorize(ev)
                     key = KEYBOARD_MAPPING.get(data.scancode, None)
                     if key == None or key == 'ENTER':
-                        await BARCODE_QUEUE.put(barcode)
+                        await BARCODE_QUEUE.put({"barcode": barcode})
                         barcode = ''
                         break
                     if data.keystate == 1:

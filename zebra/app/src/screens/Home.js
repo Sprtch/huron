@@ -25,16 +25,6 @@ export default class Home extends Component {
             </form>
           </div>
         </div>
-        <div className="card code-update-card">
-          <div className="card-header">
-            In case of fire
-          </div>
-          <div className="card-body">
-            <form action="/update" className="form-inline" method="post">
-              <button type="submit" className="btn btn-primary mb-2">Update Code</button>
-            </form>
-          </div>
-        </div>
       </div>
     );
   }
