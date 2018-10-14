@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-class PartImportModel extends Component {
+class PartImportModal extends Component {
   render() {
     return (
       <span>
@@ -71,7 +71,14 @@ export default class Parts extends Component {
       <div className="container">
         <h1>Separtech Parts page</h1>
         <hr/>
-        <input type="text" value={this.state.filter} onChange={this.handleFiltering} />
+        <div className="row">
+          <div className="col">
+            <input type="text" value={this.state.filter} onChange={this.handleFiltering} />
+          </div>
+          <div className="col">
+            <PartImportModal />
+          </div>
+        </div>
         <table class="table">
           <thead>
             <tr>

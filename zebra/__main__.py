@@ -94,7 +94,7 @@ async def api_parts():
             part = Part(name=name, barcode=barcode)
             db_session.add(part)
             db_session.commit()
-        return redirect(request.url)
+        return redirect(url_for('index'))
     return jsonify([x.to_dict() for x in db_session.query(Part).all()])
 
 @app.route('/update', methods=['POST'])
