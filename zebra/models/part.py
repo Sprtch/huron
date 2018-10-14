@@ -14,3 +14,10 @@ class Part(Base):
 
     def __repr__(self):
         return '<Part %r>' % (self.name)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'barcode': self.barcode,
+        }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-class PartImportModel extends Component {
+class PartImportModal extends Component {
   render() {
     return (
       <span>
@@ -40,12 +40,30 @@ class PartImportModel extends Component {
 export default class Parts extends Component {
   constructor(props) {
     super(props);
-    this.state = { parts: [], };
+    this.state = {
+      parts: [],
+      showed: [],
+     };
+
+     this.handleFiltering = this.handleFiltering.bind(this);
   }
 
   componentWillMount() {
     axios.get('/api/parts')
-      .then(response => this.setState({parts: response.data}););
+      .then(response => this.setState({
+        filter: '',
+        parts: response.data,
+        showed: response.data,
+      })
+    );
+  }
+
+  handleFiltering(ev) {
+    const filter = ev.target.value;
+    this.setState({
+      filter: ev.target.value,
+      showed: this.state.parts.filter(x => x.barcode.includes(filter) || x.name.includes(filter)),
+    });
   }
 
   render() {
@@ -53,20 +71,29 @@ export default class Parts extends Component {
       <div className="container">
         <h1>Separtech Parts page</h1>
         <hr/>
-        <PartImportModel/>
+        <div className="row">
+          <div className="col">
+            <input type="text" value={this.state.filter} onChange={this.handleFiltering} />
+          </div>
+          <div className="col">
+            <PartImportModal />
+          </div>
+        </div>
         <table class="table">
           <thead>
             <tr>
               <th scope="col">Barcode</th>
               <th scope="col">Name</th>
+              <th scope="col">Print</th>
             </tr>
           </thead>
           <tbody>
-            {this.state.parts.map(x =>
+            {this.state.showed.map(x =>
               (
                 <tr>
                   <td>{x.barcode}</td>
                   <td>{x.name}</td>
+                  <td><button type="button" class="btn btn-primary" onClick={() => axios.post('/print', { barcode: x.barcode, name: x.name })}>Print</button></td>
                 </tr>
               )
             )}
