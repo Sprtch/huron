@@ -8,10 +8,13 @@ from evdev import InputDevice, categorize, ecodes
 import subprocess as sp
 import signal
 import os
+import pandas
 from quart import Quart, render_template, redirect, request, url_for, jsonify
 from models.part import Part
 from models.database import db_session, init_db
 
+LOGGING_PATH = "/var/log/zebra.log"
+SAVE_PATH = "/tmp/"
 # logging.basicConfig(filename='/var/log/zebra.log', level=logging.DEBUG)
 init_db()
 
@@ -75,8 +78,10 @@ def is_csv(filename):
 @app.route('/api/parts', methods=['GET', 'POST'])
 async def api_parts():
     if request.method == 'POST':
-        if 'file' in request.files:
-            file = request.files['file']
+        files = await request.files
+        logging.warning(files)
+        if 'file' in files:
+            file = files['file']
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
@@ -84,9 +89,17 @@ async def api_parts():
                 pass
                 # TODO Parse csv
                 # filename = secure_filename(file.filename)
-                # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                # return redirect(url_for('uploaded_file',
-                #                         filename=filename))
+                filename = (file.filename)
+                logging.info("Saving " + os.path.join(SAVE_PATH, filename))
+                file.save(os.path.join(SAVE_PATH, filename))
+                df = pandas.read_csv(SAVE_PATH + filename, encoding="latin3")
+                for (name, barcode) in zip(df['default_code'], df['barcode']):
+                    part = Part(name=name, barcode=barcode)
+                    db_session.add(part)
+                    try:
+                        db_session.commit()
+                    except:
+                        db_session.rollback()
         else:
             form = await request.form
             name = form["name"]

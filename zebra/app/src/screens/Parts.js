@@ -15,7 +15,7 @@ class PartImportModal extends Component {
               </button>
             </div>
             <div class="modal-body">
-              <form action="/api/parts" className="form-inline" method="post">
+              <form enctype="multipart/form-data" action="/api/parts" className="form-inline" method="post">
                 <div className="form-group mb-2">
                   <label for="barcodeInput">Barcode</label>
                   <input type="text" name="barcode" className="form-control" id="barcodeInput" aria-describedby="barcodeHelp" placeholder="Enter barcode"/>
@@ -23,7 +23,12 @@ class PartImportModal extends Component {
                 <div className="form-group mb-2">
                   <input type="text" name="name" className="form-control" id="nameInput" placeholder="Enter part name"/>
                 </div>
-                <button type="submit" className="btn btn-primary mb-2">Submit</button>
+                <div className="form-group mb-2">
+                  <input type="file" name="file"/>
+                </div>
+                <div className="form-group mb-2">
+                  <button type="submit" className="btn btn-primary mb-2">Submit</button>
+                </div>
               </form>
             </div>
           </div>
@@ -62,7 +67,7 @@ export default class Parts extends Component {
     const filter = ev.target.value;
     this.setState({
       filter: ev.target.value,
-      showed: this.state.parts.filter(x => x.barcode.includes(filter) || x.name.includes(filter)),
+      showed: this.state.parts.filter(x => (x.barcode && x.barcode.includes(filter)) || (x.name && x.name.includes(filter))),
     });
   }
 

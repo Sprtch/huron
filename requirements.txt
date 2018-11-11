@@ -8,3 +8,4 @@ PyYAML>=4.2b4
 git+https://github.com/Supervisor/supervisor
 superfsmon
 Flask-SQLAlchemy
+pandas
