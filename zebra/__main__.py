@@ -97,7 +97,7 @@ async def api_parts():
                 filename = (file.filename)
                 logging.info("Saving " + os.path.join(SAVE_PATH, filename))
                 file.save(os.path.join(SAVE_PATH, filename))
-                df = pandas.read_csv(SAVE_PATH + filename, encoding="latin3")
+                df = pandas.read_csv(SAVE_PATH + filename, encoding="latin1")
                 for (name, barcode) in zip(df['default_code'], df['barcode']):
                     part = Part(name=name, barcode=barcode)
                     db_session.add(part)
