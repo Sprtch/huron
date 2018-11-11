@@ -67,7 +67,7 @@ export default class Parts extends Component {
     const filter = ev.target.value;
     this.setState({
       filter: ev.target.value,
-      showed: this.state.parts.filter(x => (x.barcode && x.barcode.includes(filter)) || (x.name && x.name.includes(filter))),
+      showed: this.state.filter.split(" ").reduce((acc, current) => acc.filter(x => (x.barcode && x.barcode.includes(current)) || (x.name && x.name.includes(current))), this.state.parts),
     });
   }
 
@@ -78,7 +78,7 @@ export default class Parts extends Component {
         <hr/>
         <div className="row">
           <div className="col">
-            <input type="text" value={this.state.filter} onChange={this.handleFiltering} />
+            <input type="text" value={this.state.filter} onChange={this.handleFiltering} placeholder="Filter"/>
           </div>
           <div className="col">
             <PartImportModal />
