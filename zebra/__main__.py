@@ -78,12 +78,17 @@ def is_csv(filename):
 @app.route('/api/parts', methods=['GET', 'POST'])
 async def api_parts():
     if request.method == 'POST':
+        form = await request.form
         files = await request.files
-        logging.warning(files)
-        if 'file' in files:
+        if form["name"] and form["barcode"]:
+            name = form["name"]
+            barcode = form["barcode"]
+            part = Part(name=name, barcode=barcode)
+            db_session.add(part)
+            db_session.commit()
+        elif 'file' in files:
             file = files['file']
             if file.filename == '':
-                flash('No selected file')
                 return redirect(request.url)
             if file and is_csv(file.filename):
                 pass
@@ -100,13 +105,6 @@ async def api_parts():
                         db_session.commit()
                     except:
                         db_session.rollback()
-        else:
-            form = await request.form
-            name = form["name"]
-            barcode = form["barcode"]
-            part = Part(name=name, barcode=barcode)
-            db_session.add(part)
-            db_session.commit()
         return redirect(url_for('index'))
     return jsonify([x.to_dict() for x in db_session.query(Part).all()])
 
