@@ -1,4 +1,5 @@
 {% set barcode_length = number | length -%}
+{% set name_length = name | length -%}
 ^XA
 
 ^FX SEPARTECH LOGO SECTION
@@ -11,7 +12,11 @@
 {% endif %}
 
 ^FX Product title
+{% if name_length > 28 %}
+^CFA,15
+{% else %}
 ^CFA,30
+{% endif %}
 {% if barcode_length < 14 %}
 ^FO280,50^FD{{ name }}^FS
 
