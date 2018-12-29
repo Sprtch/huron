@@ -157,7 +157,7 @@ async def barcode_scanner_listener():
                 if ev.type == ecodes.EV_KEY:
                     data = categorize(ev)
                     if (data.keystate == 0):
-                        key = ecodes.KEY[data.scancode][4:]
+                        key = ecodes.KEY[data.scancode][4:] # Remove the "KEY_" default character of ecode to only get the key
                         key = KEYBOARD_TRANSLATE.get(key, key)
                         if (key == None and barcode) or key == 'ENTER':
                             await BARCODE_QUEUE.put({"barcode": barcode})
