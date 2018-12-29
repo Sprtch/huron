@@ -9,6 +9,7 @@ import subprocess as sp
 import signal
 import os
 import pandas
+import uuid
 from quart import Quart, render_template, redirect, request, url_for, jsonify
 from models.part import Part
 from models.database import db_session, init_db
@@ -34,19 +35,10 @@ BARCODE_QUEUE = asyncio.Queue(loop=asyncio.get_event_loop())
 
 # Make the keyboard mapping between the scandata received from evdev and the
 # actual value on the keyboard (should be qwerty).
-KEYBOARD_MAPPING = {
+KEYBOARD_TRANSLATE = {
     # Keyboard code: actual number
-    11: 0,
-    2: 1,
-    3: 2,
-    4: 3,
-    5: 4,
-    6: 5,
-    7: 6,
-    8: 7,
-    9: 8,
-    10: 9,
-    28: 'ENTER',
+    'LEFTSHIFT': '',
+    'SLASH': '/',
 }
 
 @app.route('/')
@@ -135,7 +127,7 @@ async def process_barcode():
         info = await BARCODE_QUEUE.get()
         template = env.get_template('productbarcode40x100.zpl')
 
-        filename = '/tmp/%s.zpl' % (info['barcode'])
+        filename = '/tmp/%s.zpl' % (str(uuid.uuid4()))
         file = open(filename, 'w')
         # Get part name from database.
         file.write(str(template.render(name=info.get('name', ''), number=info['barcode'])))
@@ -164,13 +156,14 @@ async def barcode_scanner_listener():
             async for ev in dev.async_read_loop():
                 if ev.type == ecodes.EV_KEY:
                     data = categorize(ev)
-                    key = KEYBOARD_MAPPING.get(data.scancode, None)
-                    if key == None or key == 'ENTER':
-                        await BARCODE_QUEUE.put({"barcode": barcode})
-                        barcode = ''
-                        break
-                    if data.keystate == 1:
-                        barcode += str(key)
+                    if (data.keystate == 0):
+                        key = ecodes.KEY[data.scancode][4:]
+                        key = KEYBOARD_TRANSLATE.get(key, key)
+                        if (key == None and barcode) or key == 'ENTER':
+                            await BARCODE_QUEUE.put({"barcode": barcode})
+                            barcode = ''
+                        elif len(key):
+                            barcode += str(key)
             dev.ungrab()
         except OSError:
             logging.warning("Barcode scanner just disconnected")
