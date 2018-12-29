@@ -67,7 +67,7 @@ export default class Parts extends Component {
     const filter = ev.target.value;
     this.setState({
       filter: ev.target.value,
-      showed: this.state.filter.split(" ").reduce((acc, current) => acc.filter(x => (x.barcode && x.barcode.includes(current)) || (x.name && x.name.includes(current))), this.state.parts),
+      showed: this.state.filter.split(" ").reduce((acc, current) => acc.filter(x => (x.barcode && x.barcode.toLowerCase().includes(current.toLowerCase())) || (x.name && x.name.toLowerCase().includes(current.toLowerCase()))), this.state.parts),
     });
   }
 
