@@ -117,7 +117,7 @@ async def update():
     return redirect(url_for('index'))
 
 def usb_scanner_checker():
-    USB_SCANNER_PATH = "/dev/input/by-id/usb-SCANNER_SCANNER_08FF20150112-event-kbd"
+    USB_SCANNER_PATH = "/dev/input/by-id/usb-Belon.cn_2.4G_Wireless_Device_Belon_Smart-event-kbd"
     dev = None
     while True:
         if os.path.exists(USB_SCANNER_PATH):
