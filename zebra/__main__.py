@@ -89,21 +89,22 @@ async def api_parts():
                 filename = (file.filename)
                 logging.info("Saving " + os.path.join(SAVE_PATH, filename))
                 file.save(os.path.join(SAVE_PATH, filename))
-                with open(SAVE_PATH + filename) as csv_file:
-                    csv_reader = csv.reader(csv_file, delimiter=",")
-                    column = csv_reader[0]
-                    csv_reader = csv_reader[1:]
+                with open(SAVE_PATH + filename, mode="r", encoding="latin1") as csv_file:
+                    csv_reader = csv.DictReader(csv_file, delimiter=",")
+                    line_count = 0
                     for row in csv_reader:
-                        part = Part(
-                            name=row[column.index("default_code")],
-                            barcode=row[column.index("barcode")],
-                        )
+                        if line_count > 0:
+                            part = Part(
+                                name=row["default_code"],
+                                barcode=row["barcode"],
+                            )
 
-                        db_session.add(part)
-                        try:
-                            db_session.commit()
-                        except:
-                            db_session.rollback()
+                            db_session.add(part)
+                            try:
+                                db_session.commit()
+                            except:
+                                db_session.rollback()
+                        line_count += 1
 
         return redirect(url_for('index'))
     return jsonify([x.to_dict() for x in db_session.query(Part).all()])
