@@ -8,7 +8,7 @@ from evdev import InputDevice, categorize, ecodes
 import subprocess as sp
 import signal
 import os
-import pandas
+import csv
 import uuid
 from quart import Quart, render_template, redirect, request, url_for, jsonify
 from models.part import Part
@@ -89,14 +89,22 @@ async def api_parts():
                 filename = (file.filename)
                 logging.info("Saving " + os.path.join(SAVE_PATH, filename))
                 file.save(os.path.join(SAVE_PATH, filename))
-                df = pandas.read_csv(SAVE_PATH + filename, encoding="latin1")
-                for (name, barcode) in zip(df['default_code'], df['barcode']):
-                    part = Part(name=name, barcode=barcode)
-                    db_session.add(part)
-                    try:
-                        db_session.commit()
-                    except:
-                        db_session.rollback()
+                with open(SAVE_PATH + filename) as csv_file:
+                    csv_reader = csv.reader(csv_file, delimiter=",")
+                    column = csv_reader[0]
+                    csv_reader = csv_reader[1:]
+                    for row in csv_reader:
+                        part = Part(
+                            name=row[column.index("default_code")],
+                            barcode=row[column.index("barcode")],
+                        )
+
+                        db_session.add(part)
+                        try:
+                            db_session.commit()
+                        except:
+                            db_session.rollback()
+
         return redirect(url_for('index'))
     return jsonify([x.to_dict() for x in db_session.query(Part).all()])
 
