@@ -12,7 +12,7 @@
 {% endif %}
 
 ^FX Product title
-{% if name_length > 28 %}
+{% if name_length > 36 %}
 ^CFA,15
 {% else %}
 ^CFA,30
