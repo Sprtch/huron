@@ -12,7 +12,7 @@
   },
   "scripts": {
     "dev": "react-scripts start",
-    "api": "venv/bin/python3 zebra",
+    "api": "venv/bin/flask run",
     "start": "concurrently --kill-others \"npm run dev\" \"npm run api\"",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
