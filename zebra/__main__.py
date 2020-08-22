@@ -11,8 +11,8 @@ import os
 import csv
 import uuid
 from quart import Quart, render_template, redirect, request, url_for, jsonify
-from models.part import Part
-from models.database import db_session, init_db
+from zebra.models.part import Part
+from zebra.models.database import db_session, init_db
 
 LOGGING_PATH = "/var/log/zebra.log"
 SAVE_PATH = "/tmp/"
@@ -22,13 +22,8 @@ init_db()
 # Flask Init
 app = Quart(
     __name__,
-    static_folder="app/build/static",
-    template_folder="app/build/",
-)
-
-# Jinja2 Init
-env = Environment(
-    loader=PackageLoader(__name__, 'templates')
+    static_folder="../build/static",
+    template_folder="../build/",
 )
 
 BARCODE_QUEUE = asyncio.Queue(loop=asyncio.get_event_loop())
@@ -42,8 +37,8 @@ KEYBOARD_TRANSLATE = {
 }
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+async def index():
+    return await app.send_static_file('index.html')
 
 @app.route('/print', methods=['POST'])
 async def create():
@@ -54,10 +49,11 @@ async def create():
     name = form.get("name", "")
     number = form.get("number", "1")
 
-    if number.isdigit():
-        number = int(number)
-    else:
-        number = 1
+    if type(number) == str:
+        if number.isdigit():
+            number = int(number)
+        else:
+            number = 1
 
     for _ in range(number):
         await BARCODE_QUEUE.put({"barcode": barcode, "name": name})
@@ -109,82 +105,9 @@ async def api_parts():
         return redirect(url_for('index'))
     return jsonify([x.to_dict() for x in db_session.query(Part).all()])
 
-@app.route('/update', methods=['POST'])
-async def update():
-    try:
-        sp.check_output(['git', 'pull', 'origin', 'master'])
-    except:
-        logger.error("No repository settled up")
-    return redirect(url_for('index'))
-
-def usb_scanner_checker():
-    USB_SCANNER_PATH = "/dev/input/by-id/usb-Belon.cn_2.4G_Wireless_Device_Belon_Smart-event-kbd"
-    dev = None
-    while True:
-        if os.path.exists(USB_SCANNER_PATH):
-            logging.info("Plugged barcode scanner")
-            dev = InputDevice(USB_SCANNER_PATH)
-        else:
-            logging.warning("Still no barcode scanner plugged")
-            dev = None
-
-        yield dev
-
-
-async def process_barcode():
-    while True:
-        info = await BARCODE_QUEUE.get()
-        template = env.get_template('productbarcode40x100.zpl')
-
-        filename = '/tmp/%s.zpl' % (str(uuid.uuid4()))
-        file = open(filename, 'w')
-        # Get part name from database.
-        file.write(str(template.render(name=info.get('name', ''), number=info['barcode'])))
-        file.close()
-
-        logging.info("Launching the print of the barcode: %s" % (info['barcode']))
-
-        sp.check_output(['lpr', '-P', 'zebra', '-o', 'raw', filename])
-
-
-async def input_listener():
-    while True:
-        barcode = await ainput(">>>")
-        await BARCODE_QUEUE.put({"barcode": barcode})
-
-
-async def barcode_scanner_listener():
-    barcode = ''
-    g = usb_scanner_checker()
-    for dev in g:
-        if dev is None:
-            await asyncio.sleep(5)
-            continue
-        try:
-            dev.grab()
-            async for ev in dev.async_read_loop():
-                if ev.type == ecodes.EV_KEY:
-                    data = categorize(ev)
-                    if (data.keystate == 0):
-                        key = ecodes.KEY[data.scancode][4:] # Remove the "KEY_" default character of ecode to only get the key
-                        key = KEYBOARD_TRANSLATE.get(key, key)
-                        if (key == None and barcode) or key == 'ENTER':
-                            await BARCODE_QUEUE.put({"barcode": barcode})
-                            barcode = ''
-                        elif len(key):
-                            barcode += str(key)
-            dev.ungrab()
-        except OSError:
-            logging.warning("Barcode scanner just disconnected")
-
 
 def main():
     loop = asyncio.get_event_loop()
-
-    loop.create_task(barcode_scanner_listener())
-    # loop.create_task(input_listener())
-    loop.create_task(process_barcode())
-
     app.run(debug=True, loop=loop)
     loop.close()
 
