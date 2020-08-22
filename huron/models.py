@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, String
-from zebra.models.database import Base
+from flask_sqlalchemy import SQLAlchemy
 
+db = SQLAlchemy()
 
-class Part(Base):
+class Part(db.Model):
     __tablename__ = 'part'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True)
-    barcode = Column(String(120), unique=True)
-    counter = Column(Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+    barcode = db.Column(db.String(120), unique=True)
+    counter = db.Column(db.Integer)
 
     def __init__(self, name=None, barcode=None):
         self.name = name
