@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { PlainInput, ExpandInput } from "../component/Input";
 import axios from "axios";
 
 const PartImportModal = () => (
@@ -25,7 +26,6 @@ const PartImportModal = () => (
               method="post"
             >
               <div className="form-group mb-2">
-                <label for="barcodeInput">Barcode</label>
                 <input
                   type="text"
                   name="barcode"
@@ -56,7 +56,7 @@ const PartImportModal = () => (
     </div>
     <button
       type="button"
-      class="btn btn-primary"
+      className="btn btn-light mr-2"
       data-toggle="modal"
       data-target="#addModal"
     >
@@ -105,7 +105,7 @@ const BulkImportModal = () => (
     </div>
     <button
       type="button"
-      class="btn btn-primary"
+      className="btn btn-light mr-2"
       data-toggle="modal"
       data-target="#csvModal"
     >
@@ -113,6 +113,73 @@ const BulkImportModal = () => (
     </button>
   </span>
 );
+
+const PartLine = ({ id, counter, barcode, name }) => {
+  const [number, setNumber] = React.useState(1);
+  const [expanded, setExpanded] = React.useState(false);
+  const [printing, setPrinting] = React.useState(false);
+
+  const increase = () => {
+    setNumber(number + 1);
+  };
+  const decrease = () => {
+    if (number > 1) {
+      setNumber(number - 1);
+    }
+  };
+  const handleNumber = (ev) => {
+    setNumber(ev.target.value);
+  };
+  const expandedToggle = () => {
+    setExpanded(!expanded);
+  };
+  const handlePrint = () => {
+    setPrinting(true);
+    axios
+      .post("/api/print", { barcode, name, number })
+      .then((response) => {
+        setPrinting(false);
+      })
+      .catch((err) => {
+        setPrinting(false);
+      });
+  };
+
+  return (
+    <tr>
+      <td>{barcode}</td>
+      <td>{name}</td>
+      <td>
+        <button type="button" className="btn btn-primary" onClick={handlePrint}>
+          {printing ? (
+            <div className="spinner-border" role="status" />
+          ) : (
+            "Print"
+          )}
+        </button>
+      </td>
+      <td>
+        <div className="btn-group mr-2" role="group" aria-label="First group">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={decrease}
+          >
+            -
+          </button>
+          <PlainInput type="number" value={number} onChange={handleNumber} />
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={increase}
+          >
+            +
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+};
 
 export default class Parts extends Component {
   constructor(props) {
@@ -157,47 +224,37 @@ export default class Parts extends Component {
   render() {
     return (
       <div className="container">
-        <h1>Separtech Parts page</h1>
-        <hr />
-        <div className="row">
-          <div className="col">
-            <input
-              type="text"
-              value={this.state.filter}
-              onChange={this.handleFiltering}
-              placeholder="Filter"
-            />
-          </div>
-          <div className="col">
-            <PartImportModal />
-            <BulkImportModal />
+        <div className="card bg-primary">
+          <div className="card-body">
+            <div className="row">
+              <div className="col">
+                <ExpandInput
+                  type="text"
+                  value={this.state.filter}
+                  onChange={this.handleFiltering}
+                  placeholder="Filter..."
+                />
+              </div>
+              <div className="col-auto text-right">
+                <PartImportModal />
+                <BulkImportModal />
+              </div>
+            </div>
           </div>
         </div>
-        <table class="table">
+
+        <table className="table table-striped">
           <thead>
             <tr>
               <th scope="col">Barcode</th>
               <th scope="col">Name</th>
               <th scope="col">Print</th>
+              <th scope="col">Number</th>
             </tr>
           </thead>
           <tbody>
             {this.state.showed.map((x) => (
-              <tr>
-                <td>{x.barcode}</td>
-                <td>{x.name}</td>
-                <td>
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    onClick={() =>
-                      axios.post("/print", { barcode: x.barcode, name: x.name })
-                    }
-                  >
-                    Print
-                  </button>
-                </td>
-              </tr>
+              <PartLine {...x} />
             ))}
           </tbody>
         </table>
