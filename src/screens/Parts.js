@@ -116,7 +116,6 @@ const BulkImportModal = () => (
 
 const PartLine = ({ id, counter, barcode, name }) => {
   const [number, setNumber] = React.useState(1);
-  const [expanded, setExpanded] = React.useState(false);
   const [printing, setPrinting] = React.useState(false);
 
   const increase = () => {
@@ -129,9 +128,6 @@ const PartLine = ({ id, counter, barcode, name }) => {
   };
   const handleNumber = (ev) => {
     setNumber(ev.target.value);
-  };
-  const expandedToggle = () => {
-    setExpanded(!expanded);
   };
   const handlePrint = () => {
     setPrinting(true);
@@ -203,7 +199,6 @@ export default class Parts extends Component {
   }
 
   handleFiltering(ev) {
-    const filter = ev.target.value;
     this.setState({
       filter: ev.target.value,
       showed: this.state.filter
