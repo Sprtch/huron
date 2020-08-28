@@ -2,8 +2,12 @@ import logging
 import os
 import csv
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+import redis
 
 from huron.models import Part, db
+
+r = redis.Redis(host='localhost', port=6379, db=0)
+p = r.pubsub()
 
 LOGGING_PATH = "/var/log/zebra.log"
 SAVE_PATH = "/tmp/"
@@ -18,7 +22,7 @@ main = Blueprint(
 def index():
     return main.send_static_file('index.html')
 
-@main.route('/print', methods=['POST'])
+@main.route('/api/print', methods=['POST'])
 def create():
     form = request.get_json()
     if form is None:
@@ -27,6 +31,8 @@ def create():
     name = form.get("name", "")
     number = form.get("number", "1")
 
+    in_db = Part.query.get(barcode)
+    print(in_db)
     if type(number) == str:
         if number.isdigit():
             number = int(number)
@@ -34,9 +40,13 @@ def create():
             number = 1
 
     for _ in range(number):
-        # await BARCODE_QUEUE.put({"barcode": barcode, "name": name})
-        pass
-    return redirect(url_for('index'))
+        r.publish('printer', '{"name": "%s", "barcode": "%s"}' % (name, barcode))
+        if in_db:
+            in_db.printed()
+
+    db.session.commit()
+
+    return jsonify({'response': 'ok'})
 
 def is_csv(filename):
     return '.' in filename and \
@@ -81,6 +91,7 @@ def api_parts():
                                 db.session.rollback()
                         line_count += 1
 
-        return redirect(url_for('index'))
-    return jsonify([x.to_dict() for x in Part.query.all()])
+        return jsonify({"response": "ok"})
+    else:
+        return jsonify([x.to_dict() for x in Part.query.all()])
 
