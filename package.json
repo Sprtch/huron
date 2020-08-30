@@ -15,7 +15,7 @@
     "dev": "react-scripts start",
     "api": "FLASK_APP=huron venv/bin/flask run",
     "start": "concurrently --kill-others \"npm run dev\" \"npm run api\"",
-    "build": "react-scripts build",
+    "build": "react-scripts build && mv build huron/view/",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

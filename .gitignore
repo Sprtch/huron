@@ -122,3 +122,4 @@ yarn-error.log*
 
 # production
 /build
+/huron/view

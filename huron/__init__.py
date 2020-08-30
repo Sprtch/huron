@@ -8,8 +8,8 @@ from huron.controllers.main import main
 def create_app(object_name = 'huron.settings.DevConfig'):
     app = Flask(
         __name__,
-        static_folder="../build/static",
-        template_folder="../build/",
+        static_folder="./view/static",
+        template_folder="./view",
     )
 
     app.config.from_object(object_name)
