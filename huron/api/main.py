@@ -12,17 +12,12 @@ p = r.pubsub()
 LOGGING_PATH = "/var/log/zebra.log"
 SAVE_PATH = "/tmp/"
 
-main = Blueprint(
-   'main', 
+api = Blueprint(
+   'api', 
    __name__,
-   static_folder="../../build/",
 )
 
-@main.route('/')
-def index():
-    return main.send_static_file('index.html')
-
-@main.route('/api/print', methods=['POST'])
+@api.route('/api/print', methods=['POST'])
 def create():
     form = request.get_json()
     if form is None:
@@ -52,7 +47,7 @@ def is_csv(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
-@main.route('/api/parts', methods=['GET', 'POST'])
+@api.route('/api/parts', methods=['GET', 'POST'])
 def api_parts():
     if request.method == 'POST':
         form = request.form
