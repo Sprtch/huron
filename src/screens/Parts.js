@@ -4,21 +4,21 @@ import axios from "axios";
 
 const PartImportModal = () => (
   <span>
-    <div class="modal" id="addModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Add part</h5>
+    <div className="modal" id="addModal" tabindex="-1" role="dialog">
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Add part</h5>
             <button
               type="button"
-              class="close"
+              className="close"
               data-dismiss="modal"
               aria-label="Close"
             >
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
+          <div className="modal-body">
             <form
               enctype="multipart/form-data"
               action="/api/parts"
@@ -67,21 +67,21 @@ const PartImportModal = () => (
 
 const BulkImportModal = () => (
   <span>
-    <div class="modal" id="csvModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">{"Bulk part import"}</h5>
+    <div className="modal" id="csvModal" tabindex="-1" role="dialog">
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">{"Bulk part import"}</h5>
             <button
               type="button"
-              class="close"
+              className="close"
               data-dismiss="modal"
               aria-label="Close"
             >
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
+          <div className="modal-body">
             <form
               enctype="multipart/form-data"
               action="/api/parts"
