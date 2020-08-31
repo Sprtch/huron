@@ -1,5 +1,7 @@
 Flask
 Flask-SQLAlchemy
+SQLAlchemy-Utils
+psycopg2
 Flask-Script
 redis
 gunicorn
