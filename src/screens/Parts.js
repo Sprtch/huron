@@ -1,10 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { PlainInput, ExpandInput } from "../component/Input";
 import axios from "axios";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 const PartImportModal = () => (
   <span>
-    <div className="modal" id="addModal" tabindex="-1" role="dialog">
+    <div className="modal" id="addModal" tabIndex="-1" role="dialog">
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header">
@@ -20,7 +21,7 @@ const PartImportModal = () => (
           </div>
           <div className="modal-body">
             <form
-              enctype="multipart/form-data"
+              encType="multipart/form-data"
               action="/api/parts"
               className="form-inline"
               method="post"
@@ -65,54 +66,60 @@ const PartImportModal = () => (
   </span>
 );
 
-const BulkImportModal = () => (
-  <span>
-    <div className="modal" id="csvModal" tabindex="-1" role="dialog">
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">{"Bulk part import"}</h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+const BulkImportModal = () => {
+  const [modal, setModal] = useState(false);
+
+  const send = (_) => {
+    const formData = new FormData();
+    const imagefile = document.querySelector("#file");
+    console.log(imagefile);
+    formData.append("file", imagefile.files[0]);
+    axios
+      .post("/api/parts", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(function (response) {
+        setModal(false);
+      })
+      .catch(function (response) {
+        console.log(response);
+      });
+  };
+
+  const toggle = () => setModal(!modal);
+
+  return (
+    <span>
+      <Button color="light" className="mr-2" onClick={toggle}>
+        Add part from CSV
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>{"Bulk part import"}</ModalHeader>
+        <ModalBody>
+          <div className="form-inline">
+            <input type="hidden" name="barcode" />
+            <input type="hidden" name="name" />
+            <div className="form-group mb-2">
+              <input id="file" type="file" name="file" />
+            </div>
+            <div className="form-group mb-2">
+              <button className="btn btn-primary mb-2" onClick={send}>
+                Submit
+              </button>
+            </div>
           </div>
-          <div className="modal-body">
-            <form
-              enctype="multipart/form-data"
-              action="/api/parts"
-              className="form-inline"
-              method="post"
-            >
-              <input type="hidden" name="barcode" />
-              <input type="hidden" name="name" />
-              <div className="form-group mb-2">
-                <input type="file" name="file" />
-              </div>
-              <div className="form-group mb-2">
-                <button type="submit" className="btn btn-primary mb-2">
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button
-      type="button"
-      className="btn btn-light mr-2"
-      data-toggle="modal"
-      data-target="#csvModal"
-    >
-      Add part from CSV
-    </button>
-  </span>
-);
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </span>
+  );
+};
 
 const PartLine = ({ id, counter, barcode, name }) => {
   const [number, setNumber] = React.useState(1);
@@ -249,7 +256,7 @@ export default class Parts extends Component {
           </thead>
           <tbody>
             {this.state.showed.map((x) => (
-              <PartLine {...x} />
+              <PartLine {...x} key={x.barcode} />
             ))}
           </tbody>
         </table>
