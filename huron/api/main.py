@@ -1,10 +1,13 @@
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from concurrent.futures import ThreadPoolExecutor
 import logging
 import os
 import csv
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 import redis
 
 from huron.models import Part, db
+
+executor = ThreadPoolExecutor(1)
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 p = r.pubsub()
@@ -35,24 +38,42 @@ def create():
             number = 1
 
     for _ in range(number):
-        r.publish('printer', '{"name": "%s", "barcode": "%s"}' % (name, barcode))
         if in_db:
             in_db.printed()
-
     db.session.commit()
-
+    r.publish('victoria', '{"name": "%s", "barcode": "%s", "number": %i}' % (name, barcode, number))
     return jsonify({'response': 'ok'})
 
 def is_csv(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
+def save_csv(filename):
+    with open(SAVE_PATH + filename, mode="r", encoding="utf-8") as csv_file:
+        csv_reader = csv.DictReader(csv_file, delimiter=",")
+        line_count = 0
+        # Part.__table__.drop(db.engine)
+        Part.query.delete()
+        for row in csv_reader:
+           if line_count > 0:
+               part = Part(
+                   name=row["default_code"],
+                   barcode=row["barcode"],
+               )
+
+               db.session.add(part)
+               try:
+                  db.session.commit()
+               except:
+                  db.session.rollback()
+           line_count += 1
+
 @api.route('/api/parts', methods=['GET', 'POST'])
 def api_parts():
     if request.method == 'POST':
         form = request.form
         files = request.files
-        if form["name"] and form["barcode"]:
+        if form.get("name", None) and form.get("barcode", None):
             name = form["name"]
             barcode = form["barcode"]
             part = Part(name=name, barcode=barcode)
@@ -63,28 +84,10 @@ def api_parts():
             if file.filename == '':
                 return redirect(request.url)
             if file and is_csv(file.filename):
-                pass
-                # TODO Parse csv
-                # filename = secure_filename(file.filename)
                 filename = (file.filename)
                 logging.info("Saving " + os.path.join(SAVE_PATH, filename))
                 file.save(os.path.join(SAVE_PATH, filename))
-                with open(SAVE_PATH + filename, mode="r", encoding="latin1") as csv_file:
-                    csv_reader = csv.DictReader(csv_file, delimiter=",")
-                    line_count = 0
-                    for row in csv_reader:
-                        if line_count > 0:
-                            part = Part(
-                                name=row["default_code"],
-                                barcode=row["barcode"],
-                            )
-
-                            db.session.add(part)
-                            try:
-                                db.session.commit()
-                            except:
-                                db.session.rollback()
-                        line_count += 1
+                executor.submit(save_csv, SAVE_PATH + filename)
 
         return jsonify({"response": "ok"})
     else:
