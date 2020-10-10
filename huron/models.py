@@ -4,7 +4,8 @@ db = SQLAlchemy()
 
 class Part(db.Model):
     __tablename__ = 'part'
-    barcode = db.Column(db.String(120), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    barcode = db.Column(db.String(120))
     name = db.Column(db.String(50))
     counter = db.Column(db.Integer)
 
@@ -21,6 +22,7 @@ class Part(db.Model):
 
     def to_dict(self):
         return {
+            'id': self.id,
             'barcode': self.barcode,
             'name': self.name,
             'counter': self.counter,

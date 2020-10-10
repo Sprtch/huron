@@ -52,7 +52,7 @@ def save_csv(filename):
         line_count = 0
         Part.query.delete()
         for row in csv_reader:
-           if line_count > 0:
+           if line_count > 0 and row["barcode"] and row["default_code"]:
                part = Part(
                    name=row["default_code"],
                    barcode=row["barcode"],
