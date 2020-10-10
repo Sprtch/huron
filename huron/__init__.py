@@ -4,6 +4,7 @@ import logging
 import os
 
 from huron.models import db
+from huron.core.executor import executor
 from huron.api.main import api
 
 def create_app(object_name = 'huron.settings.DevConfig', log_file=None):
@@ -26,6 +27,8 @@ def create_app(object_name = 'huron.settings.DevConfig', log_file=None):
         create_database(app.config['SQLALCHEMY_DATABASE_URI'])
         with app.app_context():
             db.create_all()
+
+    executor.init_app(app)
 
     # register our blueprints
     app.register_blueprint(api)

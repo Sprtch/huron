@@ -1,13 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
-from concurrent.futures import ThreadPoolExecutor
-import logging
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
+from huron.core.executor import executor
 import os
 import csv
 import redis
 
 from huron.models import Part, db
-
-executor = ThreadPoolExecutor(1)
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 p = r.pubsub()
@@ -49,10 +46,10 @@ def is_csv(filename):
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
 def save_csv(filename):
-    with open(SAVE_PATH + filename, mode="r", encoding="utf-8") as csv_file:
+    with open(filename, mode="r", encoding="utf-8") as csv_file:
+        # app.logger.info("Start importing the csv: %s" % filename)
         csv_reader = csv.DictReader(csv_file, delimiter=",")
         line_count = 0
-        # Part.__table__.drop(db.engine)
         Part.query.delete()
         for row in csv_reader:
            if line_count > 0:
@@ -67,6 +64,7 @@ def save_csv(filename):
                except:
                   db.session.rollback()
            line_count += 1
+        # app.logger.info("Done importing the csv: %s" % filename)
 
 @api.route('/api/parts', methods=['GET', 'POST'])
 def api_parts():
@@ -85,9 +83,9 @@ def api_parts():
                 return redirect(request.url)
             if file and is_csv(file.filename):
                 filename = (file.filename)
-                logging.info("Saving " + os.path.join(SAVE_PATH, filename))
+                current_app.logger.info("Saving " + os.path.join(SAVE_PATH, filename))
                 file.save(os.path.join(SAVE_PATH, filename))
-                executor.submit(save_csv, SAVE_PATH + filename)
+                executor.submit(save_csv, os.path.join(SAVE_PATH, filename))
 
         return jsonify({"response": "ok"})
     else:

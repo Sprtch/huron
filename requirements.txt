@@ -1,5 +1,6 @@
 Flask
 Flask-SQLAlchemy
+Flask-Executor
 SQLAlchemy-Utils
 psycopg2
 Flask-Script
