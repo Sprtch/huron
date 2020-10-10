@@ -3,7 +3,8 @@ class Config(object):
 
 class ProdConfig(Config):
     ENV = 'prod'
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost/huron'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost/huron'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////var/db/database.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CACHE_TYPE = 'simple'
