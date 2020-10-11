@@ -26,8 +26,11 @@ def create_app(object_name = 'huron.settings.DevConfig', log_file=None):
     if not database_exists(app.config['SQLALCHEMY_DATABASE_URI']):
         create_database(app.config['SQLALCHEMY_DATABASE_URI'])
 
-    with app.app_context():
-        db.create_all()
+    try:
+        with app.app_context():
+            db.create_all()
+    except:
+        app.logger.error("Tables already exists")
 
     executor.init_app(app)
 
