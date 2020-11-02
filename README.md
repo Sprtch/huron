@@ -6,6 +6,9 @@ A small server to interface a sticker label printer.
 
 ## Usage
 
+During development run the following commands to setup a development
+environment.
+
 ```
 >virtualenv venv
 >source venv/bin/activate
@@ -17,10 +20,21 @@ A small server to interface a sticker label printer.
 >npm start
 ```
 
-You should be in the group `input` to be able to run the script without root.
-Also you should put the correct device name if yours is different.
+The command `npm start` will start both the _Flask_ dev server and the
+_react-app_ dev server.
+Developper access the UI through the create-react-app dev server and
+all the request will get proxyfied to the flask dev server.
 
 ## Deployment
+
+Build the deploy version of the application with the following command
+
+```
+npm run build
+```
+
+This command will make sure to move the builded webapp to the folder
+`huron/view` to be served statically with Flask.
 
 ## Good things to know
 
