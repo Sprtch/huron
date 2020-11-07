@@ -1,5 +1,5 @@
 Flask
-Flask-SQLAlchemy
+-e git+git://github.com/Sprtch/despinassy.git#egg=despinassy-pkg-tperale
 Flask-Executor
 SQLAlchemy-Utils
 psycopg2

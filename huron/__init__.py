@@ -3,7 +3,7 @@ from sqlalchemy_utils import database_exists, create_database
 import logging
 import os
 
-from huron.models import db
+from despinassy.db import db
 from huron.core.executor import executor
 from huron.api.main import api
 
