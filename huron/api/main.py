@@ -4,7 +4,7 @@ import os
 import csv
 import redis
 
-from huron.models import Part, db
+from despinassy import Part, db
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 p = r.pubsub()
@@ -26,8 +26,7 @@ def create():
     name = form.get("name", "")
     number = form.get("number", "1")
 
-    in_db = Part.query.get(barcode)
-    print(in_db)
+    in_db = Part.query.filter(Part.barcode == barcode).first()
     if type(number) == str:
         if number.isdigit():
             number = int(number)
@@ -46,8 +45,8 @@ def is_csv(filename):
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
 def save_csv(filename):
-    with open(filename, mode="r", encoding="utf-8") as csv_file:
-        # app.logger.info("Start importing the csv: %s" % filename)
+    with open(filename, mode="r", encoding="utf-8", errors='ignore') as csv_file:
+        current_app.logger.info("Start importing the csv: %s" % filename)
         csv_reader = csv.DictReader(csv_file, delimiter=",")
         line_count = 0
         Part.query.delete()
@@ -64,7 +63,7 @@ def save_csv(filename):
                except:
                   db.session.rollback()
            line_count += 1
-        # app.logger.info("Done importing the csv: %s" % filename)
+        current_app.logger.info("Done importing the csv: %s" % filename)
 
 @api.route('/api/parts', methods=['GET', 'POST'])
 def api_parts():
@@ -90,4 +89,3 @@ def api_parts():
         return jsonify({"response": "ok"})
     else:
         return jsonify([x.to_dict() for x in Part.query.all()])
-

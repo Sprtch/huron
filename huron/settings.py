@@ -14,6 +14,7 @@ class DevConfig(Config):
     ENV = 'dev'
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+    EXECUTOR_PROPAGATE_EXCEPTIONS = True
 
     SQLALCHEMY_DATABASE_URI = 'sqlite:///../database.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
