@@ -45,7 +45,7 @@ def is_csv(filename):
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
 def save_csv(filename):
-    with open(filename, mode="r", encoding="ISO-8859-1") as csv_file:
+    with open(filename, mode="r", encoding="ISO-8859-1", errors='ignore') as csv_file:
         current_app.logger.info("Start importing the csv: %s" % filename)
         csv_reader = csv.DictReader(csv_file, delimiter=",")
         line_count = 0
