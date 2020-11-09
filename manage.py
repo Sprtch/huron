@@ -5,7 +5,7 @@ import os
 from flask_script import Manager, Server
 from flask_script.commands import ShowUrls, Clean
 from huron import create_app
-from huron.models import db, Part
+from despinassy import db, Part
 
 # default to dev config because no one should use this in
 # production anyway
