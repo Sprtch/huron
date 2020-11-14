@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
 from huron.core.executor import executor
+from despinassy.ipc import redis_subscribers_num, IpcPrintMessage
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
 import os
 import csv
 import redis
+import json
 
 from despinassy import Part, db
 
@@ -37,7 +39,17 @@ def create():
         if in_db:
             in_db.printed()
     db.session.commit()
-    r.publish('victoria', '{"name": "%s", "barcode": "%s", "number": %i}' % (name, barcode, number))
+
+    chan = 'victoria'
+    ipc_msg = IpcPrintMessage(name=name, barcode=barcode, origin='huron')._asdict()
+    if redis_subscribers_num(r, chan):
+       r.publish(
+             chan,
+             json.dumps(ipc_msg)
+       )
+    else:
+       current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
+
     return jsonify({'response': 'ok'})
 
 def is_csv(filename):
