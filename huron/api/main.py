@@ -1,5 +1,5 @@
 from huron.core.executor import executor
-from despinassy.ipc import redis_subscribers_num, IpcPrintMessage
+from despinassy.ipc import redis_subscribers_num, ipc_create_print_message
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
 import os
 import csv
@@ -41,7 +41,7 @@ def create():
     db.session.commit()
 
     chan = 'victoria'
-    ipc_msg = IpcPrintMessage(name=name, barcode=barcode, origin='huron')._asdict()
+    ipc_msg = ipc_create_print_message({}, name=name, barcode=barcode, number=number,origin='huron')._asdict()
     if redis_subscribers_num(r, chan):
        r.publish(
              chan,
