@@ -80,11 +80,11 @@ const BulkImportModal = () => {
           "Content-Type": "multipart/form-data",
         },
       })
-      .then(function (response) {
+      .then((_) => {
         setModal(false);
       })
-      .catch(function (response) {
-        console.log(response);
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -121,7 +121,7 @@ const BulkImportModal = () => {
   );
 };
 
-const PartLine = ({ id, counter, barcode, name }) => {
+const PartLine = ({ barcode, name }) => {
   const [number, setNumber] = React.useState(1);
   const [printing, setPrinting] = React.useState(false);
 
@@ -140,10 +140,10 @@ const PartLine = ({ id, counter, barcode, name }) => {
     setPrinting(true);
     axios
       .post("/api/print", { barcode, name, number })
-      .then((response) => {
+      .then((_) => {
         setPrinting(false);
       })
-      .catch((err) => {
+      .catch((_) => {
         setPrinting(false);
       });
   };
