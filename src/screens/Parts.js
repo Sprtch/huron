@@ -1,5 +1,6 @@
-import React, { Component, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PlainInput, ExpandInput } from "../component/Input";
+import { Loading } from "../component/Spinner";
 import axios from "axios";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
@@ -72,7 +73,6 @@ const BulkImportModal = () => {
   const send = (_) => {
     const formData = new FormData();
     const imagefile = document.querySelector("#file");
-    console.log(imagefile);
     formData.append("file", imagefile.files[0]);
     axios
       .post("/api/parts", formData, {
@@ -184,31 +184,35 @@ const PartLine = ({ barcode, name }) => {
   );
 };
 
-export default class Parts extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      parts: [],
-      showed: [],
-    };
+export default () => {
+  const [parts, setParts] = useState([]);
+  const [showed, setShowed] = useState([]);
+  const [filter, setFilter] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    this.handleFiltering = this.handleFiltering.bind(this);
-  }
-
-  componentWillMount() {
-    axios.get("/api/parts").then((response) =>
-      this.setState({
-        filter: "",
-        parts: response.data,
-        showed: response.data,
+  useEffect(() => {
+    setLoading(true);
+    axios
+      .get("/api/parts")
+      .then((response) => {
+        setLoading(false);
+        setFilter("");
+        setParts(response.data);
+        setShowed(response.data);
       })
-    );
-  }
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+        setFilter("");
+        setParts([]);
+        setShowed([]);
+      });
+  }, []);
 
-  handleFiltering(ev) {
-    this.setState({
-      filter: ev.target.value,
-      showed: this.state.filter
+  const handleFiltering = (ev) => {
+    setFilter(ev.target.value);
+    setShowed(
+      filter
         .split(" ")
         .reduce(
           (acc, current) =>
@@ -218,33 +222,35 @@ export default class Parts extends Component {
                   x.barcode.toLowerCase().includes(current.toLowerCase())) ||
                 (x.name && x.name.toLowerCase().includes(current.toLowerCase()))
             ),
-          this.state.parts
-        ),
-    });
-  }
+          parts
+        )
+    );
+  };
 
-  render() {
-    return (
-      <div className="container">
-        <div className="card bg-primary">
-          <div className="card-body">
-            <div className="row">
-              <div className="col">
-                <ExpandInput
-                  type="text"
-                  value={this.state.filter}
-                  onChange={this.handleFiltering}
-                  placeholder="Filter..."
-                />
-              </div>
-              <div className="col-auto text-right">
-                <PartImportModal />
-                <BulkImportModal />
-              </div>
+  return (
+    <div className="container">
+      <div className="card bg-primary">
+        <div className="card-body">
+          <div className="row">
+            <div className="col">
+              <ExpandInput
+                type="text"
+                value={filter}
+                onChange={handleFiltering}
+                placeholder="Filter..."
+              />
+            </div>
+            <div className="col-auto text-right">
+              <PartImportModal />
+              <BulkImportModal />
             </div>
           </div>
         </div>
+      </div>
 
+      {loading ? (
+        <Loading />
+      ) : (
         <table className="table table-striped">
           <thead>
             <tr>
@@ -255,12 +261,12 @@ export default class Parts extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.showed.map((x) => (
+            {showed.map((x) => (
               <PartLine {...x} key={x.barcode} />
             ))}
           </tbody>
         </table>
-      </div>
-    );
-  }
-}
+      )}
+    </div>
+  );
+};
