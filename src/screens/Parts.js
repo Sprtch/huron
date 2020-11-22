@@ -229,20 +229,22 @@ export default () => {
 
   return (
     <div className="container">
-      <div className="card bg-primary">
-        <div className="card-body">
-          <div className="row">
-            <div className="col">
-              <ExpandInput
-                type="text"
-                value={filter}
-                onChange={handleFiltering}
-                placeholder="Filter..."
-              />
-            </div>
-            <div className="col-auto text-right">
-              <PartImportModal />
-              <BulkImportModal />
+      <div className="py-1">
+        <div className="card bg-primary">
+          <div className="card-body">
+            <div className="row">
+              <div className="col">
+                <ExpandInput
+                  type="text"
+                  value={filter}
+                  onChange={handleFiltering}
+                  placeholder="Filter..."
+                />
+              </div>
+              <div className="col-auto text-right">
+                <PartImportModal />
+                <BulkImportModal />
+              </div>
             </div>
           </div>
         </div>
