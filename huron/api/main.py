@@ -18,7 +18,7 @@ api = Blueprint(
 )
 
 @api.route('/api/print', methods=['POST'])
-def create():
+def api_print():
     form = request.get_json()
     if form is None:
         form = request.form
