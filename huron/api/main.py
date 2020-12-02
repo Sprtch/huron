@@ -78,3 +78,8 @@ def api_parts():
         return jsonify({"response": "ok"})
     else:
         return jsonify([x.to_dict() for x in Part.query.all()])
+
+@api.route('/api/inventory', methods=['GET'])
+def api_inventory():
+    if request.method == 'GET':
+        return jsonify([x.to_dict() for x in Inventory.query.all()])
