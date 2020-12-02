@@ -1,12 +1,10 @@
 from huron.core.executor import executor
 from despinassy.ipc import redis_subscribers_num, ipc_create_print_message
+from despinassy import Inventory, Part, db
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
 import os
-import csv
 import redis
 import json
-
-from despinassy import Part, db
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 p = r.pubsub()
@@ -20,7 +18,7 @@ api = Blueprint(
 )
 
 @api.route('/api/print', methods=['POST'])
-def create():
+def api_print():
     form = request.get_json()
     if form is None:
         form = request.form
@@ -56,27 +54,6 @@ def is_csv(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
-def save_csv(filename):
-    with open(filename, mode="r", encoding="ISO-8859-1", errors='ignore') as csv_file:
-        current_app.logger.info("Start importing the csv: %s" % filename)
-        csv_reader = csv.DictReader(csv_file, delimiter=",")
-        line_count = 0
-        Part.query.delete()
-        for row in csv_reader:
-           if line_count > 0 and row["barcode"] and row["default_code"]:
-               part = Part(
-                   name=row["default_code"],
-                   barcode=row["barcode"],
-               )
-
-               db.session.add(part)
-               try:
-                  db.session.commit()
-               except:
-                  db.session.rollback()
-           line_count += 1
-        current_app.logger.info("Done importing the csv: %s" % filename)
-
 @api.route('/api/parts', methods=['GET', 'POST'])
 def api_parts():
     if request.method == 'POST':
@@ -93,10 +70,10 @@ def api_parts():
             if file.filename == '':
                 return redirect(request.url)
             if file and is_csv(file.filename):
-                filename = (file.filename)
-                current_app.logger.info("Saving " + os.path.join(SAVE_PATH, filename))
-                file.save(os.path.join(SAVE_PATH, filename))
-                executor.submit(save_csv, os.path.join(SAVE_PATH, filename))
+                filename = os.path.join(SAVE_PATH, (file.filename))
+                current_app.logger.info("Saving " + filename)
+                file.save(filename)
+                executor.submit(Part.import_csv, filename, {"default_code": "name", "barcode": "barcode"})
 
         return jsonify({"response": "ok"})
     else:

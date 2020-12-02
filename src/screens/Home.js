@@ -5,7 +5,7 @@ const ManualPrint = () => {
     <div className="card-body">
       <form action="/api/print" className="form-inline" method="post">
         <div className="form-group mb-2">
-          <label for="barcodeInput">Barcode Input</label>
+          <label htmlFor="barcodeInput">Barcode Input</label>
           <input
             type="text"
             name="barcode"
@@ -30,7 +30,7 @@ const ManualPrint = () => {
             name="number"
             className="form-control"
             step="1"
-            value="1"
+            defaultValue="1"
             placeholder="Number"
           />
         </div>
