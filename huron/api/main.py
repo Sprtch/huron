@@ -1,7 +1,7 @@
 from huron.core.executor import executor
 from despinassy.ipc import redis_subscribers_num, ipc_create_print_message
 from despinassy import Inventory, Part, db
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app, send_file
 import os
 import redis
 import json
@@ -78,6 +78,13 @@ def api_parts():
         return jsonify({"response": "ok"})
     else:
         return jsonify([x.to_dict() for x in Part.query.all()])
+
+@api.route('/api/inventory/export.csv', methods=['GET'])
+def api_inventory_export():
+    if request.method == 'GET':
+        path = os.path.join('/tmp/', 'export.csv')
+        Inventory.export_csv(path)
+        return send_file(path, as_attachment=True)
 
 @api.route('/api/inventory', methods=['GET'])
 def api_inventory():
