@@ -3,6 +3,16 @@ import { Loading } from "../component/Spinner";
 import { ExpandInput } from "../component/Input";
 import axios from "axios";
 
+const DownloadButton = () => {
+  return (
+    <a href="/api/inventory/export.csv">
+      <button type="button" className="btn btn-light mr-2">
+        Export to CSV
+      </button>
+    </a>
+  );
+};
+
 const InventoryLine = ({ part, quantity }) => {
   return (
     <tr>
@@ -79,6 +89,9 @@ export default () => {
                   onChange={handleFiltering}
                   placeholder="Filter..."
                 />
+              </div>
+              <div className="col-auto text-right">
+                <DownloadButton />
               </div>
             </div>
           </div>
