@@ -86,6 +86,15 @@ def api_inventory_export():
         Inventory.export_csv(path)
         return send_file(path, as_attachment=True)
 
+@api.route('/api/inventory/<int:inventory_id>', methods=['GET'])
+def api_inventory_detail(inventory_id):
+    if request.method == 'GET':
+        x = Inventory.query.get(inventory_id)
+        if x is not None:
+           return jsonify(x.to_dict())
+        else:
+           return jsonify(None)
+
 @api.route('/api/inventory', methods=['GET'])
 def api_inventory():
     if request.method == 'GET':
