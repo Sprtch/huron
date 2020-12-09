@@ -54,7 +54,7 @@ def is_csv(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() == 'csv'
 
-@api.route('/api/parts', methods=['GET', 'POST'])
+@api.route('/api/parts/', methods=['GET', 'POST'])
 def api_parts():
     if request.method == 'POST':
         form = request.form
@@ -95,7 +95,7 @@ def api_inventory_detail(inventory_id):
         else:
            return jsonify(None)
 
-@api.route('/api/inventory', methods=['GET'])
+@api.route('/api/inventory/', methods=['GET'])
 def api_inventory():
     if request.method == 'GET':
         return jsonify([x.to_dict() for x in Inventory.query.all()])
