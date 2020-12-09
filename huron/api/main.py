@@ -82,7 +82,7 @@ def api_parts():
 @api.route('/api/inventory/export.csv', methods=['GET'])
 def api_inventory_export():
     if request.method == 'GET':
-        path = os.path.join('/tmp/', 'export.csv')
+        path = os.path.join(SAVE_PATH, 'export.csv')
         Inventory.export_csv(path)
         return send_file(path, as_attachment=True)
 
