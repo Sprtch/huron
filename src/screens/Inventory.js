@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Loading } from "../component/Spinner";
-import { ExpandInput } from "../component/Input";
+import { PlainInput, ExpandInput } from "../component/Input";
 import axios from "axios";
 
 const DownloadButton = () => {
@@ -14,11 +14,45 @@ const DownloadButton = () => {
 };
 
 const InventoryLine = ({ part, quantity }) => {
+  const Quantity = ({ quantity }) => {
+    const [edit, setEdit] = useState(false);
+    const [qquantity, setQuantity] = useState(quantity);
+
+    const handleNumber = (ev) => {
+      setQuantity(ev.target.value);
+    };
+
+    const handleSave = (ev) => {};
+
+    if (edit) {
+      return (
+        <span>
+          <PlainInput type="number" value={qquantity} onChange={handleNumber} />
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleSave}
+          >
+            Save
+          </button>
+        </span>
+      );
+    } else {
+      return (
+        <span>
+          {qquantity} <button onClick={() => setEdit(true)}>edit</button>
+        </span>
+      );
+    }
+  };
+
   return (
     <tr>
       <td>{part.barcode}</td>
       <td>{part.name}</td>
-      <td>{quantity}</td>
+      <td>
+        <Quantity quantity={quantity} />
+      </td>
     </tr>
   );
 };
