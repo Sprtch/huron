@@ -86,14 +86,21 @@ def api_inventory_export():
         Inventory.export_csv(path)
         return send_file(path, as_attachment=True)
 
-@api.route('/api/inventory/<int:inventory_id>', methods=['GET'])
+@api.route('/api/inventory/<int:inventory_id>', methods=['GET', 'POST'])
 def api_inventory_detail(inventory_id):
-    if request.method == 'GET':
-        x = Inventory.query.get(inventory_id)
-        if x is not None:
-           return jsonify(x.to_dict())
-        else:
-           return jsonify(None)
+    x = Inventory.query.get(inventory_id)
+    if x is not None:
+        return jsonify(None)
+
+    if request.method == 'POST':
+       form = request.get_json()
+       quantity = form.get('quantity', x.quantity)
+       if quantity:
+          x.quantity = quantity
+
+       db.session.commit()
+
+    return jsonify(x.to_dict())
 
 @api.route('/api/inventory/', methods=['GET'])
 def api_inventory():
