@@ -2,6 +2,32 @@ import React, { useState, useEffect } from "react";
 import { Loading } from "../component/Spinner";
 import { PlainInput, ExpandInput } from "../component/Input";
 import axios from "axios";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+
+const AddPartModal = () => {
+  const [modal, setModal] = useState(false);
+
+  const toggle = () => setModal(!modal);
+
+  return (
+    <span>
+      <Button color="light" className="mr-2" onClick={toggle}>
+        Import Part
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>
+          {"Create inventory entry for an existing part"}
+        </ModalHeader>
+        <ModalBody></ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </span>
+  );
+};
 
 const DownloadButton = () => {
   return (
@@ -150,6 +176,7 @@ export default () => {
               </div>
               <div className="col-auto text-right">
                 <DownloadButton />
+                <AddPartModal />
               </div>
             </div>
           </div>
