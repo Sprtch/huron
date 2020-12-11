@@ -26,8 +26,13 @@ const InventoryLine = ({ part, quantity }) => {
 
     if (edit) {
       return (
-        <span>
-          <PlainInput type="number" value={qquantity} onChange={handleNumber} />
+        <div className="btn-group mr-2" role="group" aria-label="invquantity">
+          <PlainInput
+            type="number"
+            style={{ width: "60px" }}
+            value={qquantity}
+            onChange={handleNumber}
+          />
           <button
             type="button"
             className="btn btn-secondary"
@@ -35,12 +40,22 @@ const InventoryLine = ({ part, quantity }) => {
           >
             Save
           </button>
-        </span>
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => setEdit(false)}
+          >
+            X
+          </button>
+        </div>
       );
     } else {
       return (
         <span>
-          {qquantity} <button onClick={() => setEdit(true)}>edit</button>
+          {qquantity}{" "}
+          <button className="btn btn-link" onClick={() => setEdit(true)}>
+            edit
+          </button>
         </span>
       );
     }
@@ -66,7 +81,7 @@ export default () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("/api/inventory")
+      .get("/api/inventory/")
       .then((response) => {
         setLoading(false);
         setFilter("");
@@ -140,7 +155,9 @@ export default () => {
             <tr>
               <th scope="col">Barcode</th>
               <th scope="col">Name</th>
-              <th scope="col">Quantity</th>
+              <th style={{ width: "200px" }} scope="col">
+                Quantity
+              </th>
             </tr>
           </thead>
           <tbody>
