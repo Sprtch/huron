@@ -13,7 +13,7 @@ const DownloadButton = () => {
   );
 };
 
-const InventoryLine = ({ part, quantity }) => {
+const InventoryLine = ({ id, part, quantity }) => {
   const Quantity = ({ quantity }) => {
     const [edit, setEdit] = useState(false);
     const [qquantity, setQuantity] = useState(quantity);
@@ -22,7 +22,16 @@ const InventoryLine = ({ part, quantity }) => {
       setQuantity(ev.target.value);
     };
 
-    const handleSave = (ev) => {};
+    const handleSave = () => {
+      axios
+        .post(`/api/inventory/${id}`, { quantity: parseInt(qquantity) })
+        .then((_) => {
+          setEdit(false);
+        })
+        .catch((_) => {
+          setEdit(false);
+        });
+    };
 
     if (edit) {
       return (
