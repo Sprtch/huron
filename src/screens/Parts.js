@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { PartContext, PartPartContext } from "../models/Parts";
 import { PlainInput, ExpandInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
-import axios from "axios";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import axios from "axios";
 
 const PartImportModal = () => (
   <span>
@@ -23,7 +24,7 @@ const PartImportModal = () => (
           <div className="modal-body">
             <form
               encType="multipart/form-data"
-              action="/api/parts"
+              action="/api/parts/"
               className="form-inline"
               method="post"
             >
@@ -75,7 +76,7 @@ const BulkImportModal = () => {
     const imagefile = document.querySelector("#file");
     formData.append("file", imagefile.files[0]);
     axios
-      .post("/api/parts", formData, {
+      .post("/api/parts/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -185,90 +186,54 @@ const PartLine = ({ barcode, name }) => {
 };
 
 export default () => {
-  const [parts, setParts] = useState([]);
-  const [showed, setShowed] = useState([]);
   const [filter, setFilter] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get("/api/parts")
-      .then((response) => {
-        setLoading(false);
-        setFilter("");
-        setParts(response.data);
-        setShowed(response.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-        setFilter("");
-        setParts([]);
-        setShowed([]);
-      });
-  }, []);
-
-  const handleFiltering = (ev) => {
-    setFilter(ev.target.value);
-    setShowed(
-      filter
-        .split(" ")
-        .reduce(
-          (acc, current) =>
-            acc.filter(
-              (x) =>
-                (x.barcode &&
-                  x.barcode.toLowerCase().includes(current.toLowerCase())) ||
-                (x.name && x.name.toLowerCase().includes(current.toLowerCase()))
-            ),
-          parts
-        )
-    );
-  };
 
   return (
-    <div className="container">
-      <div className="py-1">
-        <div className="card bg-primary">
-          <div className="card-body">
-            <div className="row">
-              <div className="col">
-                <ExpandInput
-                  type="text"
-                  value={filter}
-                  onChange={handleFiltering}
-                  placeholder="Filter..."
-                />
-              </div>
-              <div className="col-auto text-right">
-                <PartImportModal />
-                <BulkImportModal />
+    <PartContext.Consumer>
+      {(context) => (
+        <div className="container">
+          <div className="py-1">
+            <div className="card bg-primary">
+              <div className="card-body">
+                <div className="row">
+                  <div className="col">
+                    <ExpandInput
+                      type="text"
+                      value={filter}
+                      onChange={(ev) => setFilter(ev.target.value)}
+                      placeholder="Filter..."
+                    />
+                  </div>
+                  <div className="col-auto text-right">
+                    <PartImportModal />
+                    <BulkImportModal />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {loading ? (
-        <Loading />
-      ) : (
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Barcode</th>
-              <th scope="col">Name</th>
-              <th scope="col">Print</th>
-              <th scope="col">Number</th>
-            </tr>
-          </thead>
-          <tbody>
-            {showed.map((x) => (
-              <PartLine {...x} key={x.barcode} />
-            ))}
-          </tbody>
-        </table>
+          {context.loadingParts ? (
+            <Loading />
+          ) : (
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Barcode</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Print</th>
+                  <th scope="col">Number</th>
+                </tr>
+              </thead>
+              <tbody>
+                {context.filter(filter).map((x) => (
+                  <PartLine {...x} key={x.barcode} />
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       )}
-    </div>
+    </PartContext.Consumer>
   );
 };
