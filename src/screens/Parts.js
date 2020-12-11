@@ -192,6 +192,7 @@ export default () => {
     <PartContext.Consumer>
       {(context) => (
         <div className="container">
+          <h1>Parts</h1>
           <div className="py-1">
             <div className="card bg-primary">
               <div className="card-body">
