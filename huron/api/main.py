@@ -89,7 +89,7 @@ def api_inventory_export():
 @api.route('/api/inventory/<int:inventory_id>', methods=['GET', 'POST'])
 def api_inventory_detail(inventory_id):
     x = Inventory.query.get(inventory_id)
-    if x is not None:
+    if x is None:
         return jsonify(None)
 
     if request.method == 'POST':
