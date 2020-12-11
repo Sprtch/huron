@@ -143,7 +143,12 @@ export default () => {
     <InventoryContext.Consumer>
       {(ctx) => (
         <div className="container">
-          <h1>Inventory</h1>
+          <h1>
+            Inventory{" "}
+            <button onClick={ctx.fetch} className="btn btn-link">
+              ↻
+            </button>
+          </h1>
 
           <div className="py-1">
             <div className="card bg-primary">

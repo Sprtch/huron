@@ -190,9 +190,14 @@ export default () => {
 
   return (
     <PartContext.Consumer>
-      {(context) => (
+      {(ctx) => (
         <div className="container">
-          <h1>Parts</h1>
+          <h1>
+            Parts{" "}
+            <button onClick={ctx.fetch} className="btn btn-link">
+              ↻
+            </button>
+          </h1>
           <div className="py-1">
             <div className="card bg-primary">
               <div className="card-body">
@@ -214,7 +219,7 @@ export default () => {
             </div>
           </div>
 
-          {context.loadingParts ? (
+          {ctx.loadingParts ? (
             <Loading />
           ) : (
             <table className="table table-striped">
@@ -227,7 +232,7 @@ export default () => {
                 </tr>
               </thead>
               <tbody>
-                {context.filter(filter).map((x) => (
+                {ctx.filter(filter).map((x) => (
                   <PartLine {...x} key={x.barcode} />
                 ))}
               </tbody>
