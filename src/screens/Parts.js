@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PartContext, PartPartContext } from "../models/Parts";
+import { PartContext } from "../models/Parts";
 import { PlainInput, ExpandInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";

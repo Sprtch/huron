@@ -6,6 +6,7 @@ import NotFound from "./screens/NotFound";
 import Inventory from "./screens/Inventory";
 import Parts from "./screens/Parts";
 import { PartProvider } from "./models/Parts";
+import { InventoryProvider } from "./models/Inventory";
 import "./App.css";
 
 class App extends Component {
@@ -13,18 +14,20 @@ class App extends Component {
     return (
       <Router>
         <PartProvider>
-          <div>
-            <Navbar />
+          <InventoryProvider>
+            <div>
+              <Navbar />
 
-            <div style={{ marginTop: "60px" }}>
-              <Switch>
-                <Route exact path="/parts" component={Parts} />
-                <Route exact path="/inventory" component={Inventory} />
-                <Route exact path="/" component={Home} />
-                <Route component={NotFound} />
-              </Switch>
+              <div style={{ marginTop: "60px" }}>
+                <Switch>
+                  <Route exact path="/parts" component={Parts} />
+                  <Route exact path="/inventory" component={Inventory} />
+                  <Route exact path="/" component={Home} />
+                  <Route component={NotFound} />
+                </Switch>
+              </div>
             </div>
-          </div>
+          </InventoryProvider>
         </PartProvider>
       </Router>
     );

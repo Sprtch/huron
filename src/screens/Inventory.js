@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { InventoryContext } from "../models/Inventory";
+import { PartContext } from "../models/Parts";
 import { Loading } from "../component/Spinner";
 import { PlainInput, ExpandInput } from "../component/Input";
-import axios from "axios";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import axios from "axios";
 
 const AddPartModal = () => {
   const [modal, setModal] = useState(false);
@@ -18,7 +20,34 @@ const AddPartModal = () => {
         <ModalHeader toggle={toggle}>
           {"Create inventory entry for an existing part"}
         </ModalHeader>
-        <ModalBody></ModalBody>
+        <ModalBody>
+          <PartContext.Consumer>
+            {(ctx) => (
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Barcode</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Add</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ctx.parts.map((x) => (
+                    <tr>
+                      <td>{x.barcode}</td>
+                      <td>{x.name}</td>
+                      <td>
+                        <button type="button" className="btn btn-primary">
+                          Add
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </PartContext.Consumer>
+        </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggle}>
             Close
@@ -108,101 +137,57 @@ const InventoryLine = ({ id, part, quantity }) => {
 };
 
 export default () => {
-  const [inventory, setInventory] = useState([]);
-  const [showed, setShowed] = useState([]);
   const [filter, setFilter] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get("/api/inventory/")
-      .then((response) => {
-        setLoading(false);
-        setFilter("");
-        setInventory(response.data);
-        setShowed(response.data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-        setFilter("");
-        setInventory([]);
-        setShowed([]);
-      });
-  }, []);
-
-  const handleFiltering = (ev) => {
-    const newFilter = ev.target.value;
-    setFilter(newFilter);
-    if (newFilter === "") {
-      setShowed(inventory);
-      return;
-    }
-    setShowed(
-      filter
-        .split(" ")
-        .reduce(
-          (acc, current) =>
-            acc.filter(
-              (x) =>
-                (x.part.barcode &&
-                  x.part.barcode
-                    .toLowerCase()
-                    .includes(current.toLowerCase())) ||
-                (x.part.name &&
-                  x.part.name.toLowerCase().includes(current.toLowerCase()))
-            ),
-          inventory
-        )
-    );
-  };
 
   return (
-    <div className="container">
-      <h1>Inventory</h1>
+    <InventoryContext.Consumer>
+      {(ctx) => (
+        <div className="container">
+          <h1>Inventory</h1>
 
-      <div className="py-1">
-        <div className="card bg-primary">
-          <div className="card-body">
-            <div className="row">
-              <div className="col">
-                <ExpandInput
-                  type="text"
-                  value={filter}
-                  onChange={handleFiltering}
-                  placeholder="Filter..."
-                />
-              </div>
-              <div className="col-auto text-right">
-                <DownloadButton />
-                <AddPartModal />
+          <div className="py-1">
+            <div className="card bg-primary">
+              <div className="card-body">
+                <div className="row">
+                  <div className="col">
+                    <ExpandInput
+                      type="text"
+                      value={filter}
+                      onChange={(ev) => setFilter(ev.target.value)}
+                      placeholder="Filter..."
+                    />
+                  </div>
+                  <div className="col-auto text-right">
+                    <DownloadButton />
+                    <AddPartModal />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {loading ? (
-        <Loading />
-      ) : (
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Barcode</th>
-              <th scope="col">Name</th>
-              <th style={{ width: "200px" }} scope="col">
-                Quantity
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {showed.map((x) => (
-              <InventoryLine {...x} key={x.barcode} />
-            ))}
-          </tbody>
-        </table>
+          {ctx.loadingInventory ? (
+            <Loading />
+          ) : (
+            <table className="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Barcode</th>
+                  <th scope="col">Name</th>
+                  <th style={{ width: "200px" }} scope="col">
+                    Quantity
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {ctx.filter(filter).map((x) => (
+                  <InventoryLine {...x} key={x.id} />
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       )}
-    </div>
+    </InventoryContext.Consumer>
   );
 };

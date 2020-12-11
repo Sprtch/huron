@@ -1,32 +1,31 @@
 import React, { useState, createContext, useEffect } from "react";
 import axios from "axios";
 
-export const PartContext = createContext();
+export const InventoryContext = createContext();
 
-export const PartProvider = (props) => {
-  const [parts, setParts] = useState([]);
+export const InventoryProvider = (props) => {
+  const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchPart = () => {
+  const fetchInventory = () => {
     setLoading(true);
     axios
-      .get("/api/parts/")
+      .get("/api/inventory/")
       .then((response) => {
         setLoading(false);
-        setParts(response.data);
+        setInventory(response.data);
       })
       .catch((err) => {
         console.error(err);
         setLoading(false);
-        setParts([]);
+        setInventory([]);
       });
   };
 
-  const filterPart = (argument) => {
+  const filterInventory = (argument) => {
     if (!argument) {
-      return parts;
+      return inventory;
     }
-
     return argument
       .split(" ")
       .reduce(
@@ -37,23 +36,23 @@ export const PartProvider = (props) => {
                 x.barcode.toLowerCase().includes(current.toLowerCase())) ||
               (x.name && x.name.toLowerCase().includes(current.toLowerCase()))
           ),
-        parts
+        inventory
       );
   };
 
-  useEffect(() => fetchPart(), []);
+  useEffect(() => fetchInventory(), []);
 
   return (
-    <PartContext.Provider
+    <InventoryContext.Provider
       value={{
-        parts: parts,
-        loadingParts: loading,
-        fetch: fetchPart,
-        filter: filterPart,
+        inventory: inventory,
+        loadingInventory: loading,
+        fetch: fetchInventory,
+        filter: filterInventory,
         update: null,
       }}
     >
       {props.children}
-    </PartContext.Provider>
+    </InventoryContext.Provider>
   );
 };
