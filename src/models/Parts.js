@@ -51,6 +51,7 @@ export const PartProvider = (props) => {
         fetch: fetchPart,
         filter: filterPart,
         update: null,
+        edit: null,
       }}
     >
       {props.children}

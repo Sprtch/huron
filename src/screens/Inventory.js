@@ -91,12 +91,7 @@ const InventoryLine = ({ id, part, quantity }) => {
     if (edit) {
       return (
         <div className="btn-group mr-2" role="group" aria-label="invquantity">
-          <PlainInput
-            type="number"
-            style={{ width: "60px" }}
-            value={qquantity}
-            onChange={handleNumber}
-          />
+          <PlainInput type="number" value={qquantity} onChange={handleNumber} />
           <button
             type="button"
             className="btn btn-secondary"
@@ -179,7 +174,7 @@ export default () => {
                 <tr>
                   <th scope="col">Barcode</th>
                   <th scope="col">Name</th>
-                  <th style={{ width: "200px" }} scope="col">
+                  <th style={{ width: "220px" }} scope="col">
                     Quantity
                   </th>
                 </tr>

@@ -154,15 +154,6 @@ const PartLine = ({ barcode, name }) => {
       <td>{barcode}</td>
       <td>{name}</td>
       <td>
-        <button type="button" className="btn btn-primary" onClick={handlePrint}>
-          {printing ? (
-            <div className="spinner-border" role="status" />
-          ) : (
-            "Print"
-          )}
-        </button>
-      </td>
-      <td>
         <div className="btn-group mr-2" role="group" aria-label="First group">
           <button
             type="button"
@@ -178,6 +169,17 @@ const PartLine = ({ barcode, name }) => {
             onClick={increase}
           >
             +
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handlePrint}
+          >
+            {printing ? (
+              <div className="spinner-border" role="status" />
+            ) : (
+              "Print"
+            )}
           </button>
         </div>
       </td>
@@ -228,7 +230,6 @@ export default () => {
                   <th scope="col">Barcode</th>
                   <th scope="col">Name</th>
                   <th scope="col">Print</th>
-                  <th scope="col">Number</th>
                 </tr>
               </thead>
               <tbody>
