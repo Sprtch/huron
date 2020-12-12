@@ -6,7 +6,7 @@ import { CardHeaderSearch } from "../component/Card";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import axios from "axios";
 
-const PartImportModal = () => {
+const PartImportModal = ({ add }) => {
   const [modal, setModal] = useState(false);
   const [barcode, setBarcode] = useState("");
   const [name, setName] = useState("");
@@ -14,23 +14,11 @@ const PartImportModal = () => {
   const toggle = () => setModal(!modal);
 
   const send = (_) => {
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("barcode", barcode);
-    setBarcode("");
-    setName("");
-    axios
-      .post("/api/parts/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((_) => {
-        setModal(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    add({ barcode, name }).then(() => {
+      setBarcode("");
+      setName("");
+      setModal(false);
+    });
   };
 
   return (
@@ -206,7 +194,7 @@ export default () => {
             value={filter}
             onChange={(ev) => setFilter(ev.target.value)}
           >
-            <PartImportModal />
+            <PartImportModal add={ctx.add} />
             <BulkImportModal />
           </CardHeaderSearch>
 

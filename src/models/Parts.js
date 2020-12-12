@@ -41,6 +41,21 @@ export const PartProvider = (props) => {
       );
   };
 
+  const addPart = ({ barcode, name }) => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("barcode", barcode);
+    return axios
+      .post("/api/parts/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        setParts(parts.concat(res.data));
+      });
+  };
+
   useEffect(() => fetchPart(), []);
 
   return (
@@ -52,6 +67,7 @@ export const PartProvider = (props) => {
         filter: filterPart,
         update: null,
         edit: null,
+        add: addPart,
       }}
     >
       {props.children}
