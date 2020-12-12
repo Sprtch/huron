@@ -69,41 +69,32 @@ const DownloadButton = () => {
   );
 };
 
-const InventoryLine = ({ id, part, quantity }) => {
+const InventoryLine = ({ id, part, quantity, edit }) => {
   const Quantity = ({ quantity }) => {
-    const [edit, setEdit] = useState(false);
+    const [editing, setEditing] = useState(false);
     const [qquantity, setQuantity] = useState(quantity);
 
     const handleNumber = (ev) => {
       setQuantity(ev.target.value);
     };
 
-    const handleSave = () => {
-      axios
-        .post(`/api/inventory/${id}`, { quantity: parseInt(qquantity) })
-        .then((_) => {
-          setEdit(false);
-        })
-        .catch((_) => {
-          setEdit(false);
-        });
-    };
-
-    if (edit) {
+    if (editing) {
       return (
         <div className="btn-group mr-2" role="group" aria-label="invquantity">
           <PlainInput type="number" value={qquantity} onChange={handleNumber} />
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={handleSave}
+            onClick={() =>
+              edit({ id, quantity: qquantity }).then(() => setEditing(false))
+            }
           >
             Save
           </button>
           <button
             type="button"
             className="btn btn-light"
-            onClick={() => setEdit(false)}
+            onClick={() => setEditing(false)}
           >
             X
           </button>
@@ -113,7 +104,7 @@ const InventoryLine = ({ id, part, quantity }) => {
       return (
         <span>
           {qquantity}{" "}
-          <button className="btn btn-link" onClick={() => setEdit(true)}>
+          <button className="btn btn-link" onClick={() => setEditing(true)}>
             edit
           </button>
         </span>
@@ -168,7 +159,7 @@ export default () => {
               </thead>
               <tbody>
                 {ctx.filter(filter).map((x) => (
-                  <InventoryLine {...x} key={x.id} />
+                  <InventoryLine {...x} edit={ctx.edit} key={x.id} />
                 ))}
               </tbody>
             </table>

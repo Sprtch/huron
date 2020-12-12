@@ -40,6 +40,17 @@ export const InventoryProvider = (props) => {
       );
   };
 
+  const editInventory = ({ id, quantity }) =>
+    axios
+      .post(`/api/inventory/${id}`, { quantity: parseInt(quantity) })
+      .then((_) => {
+        setInventory(
+          inventory.map((x) =>
+            x.id === id ? Object.assign(x, { quantity }) : x
+          )
+        );
+      });
+
   useEffect(() => fetchInventory(), []);
 
   return (
@@ -50,6 +61,7 @@ export const InventoryProvider = (props) => {
         fetch: fetchInventory,
         filter: filterInventory,
         update: null,
+        edit: editInventory,
       }}
     >
       {props.children}
