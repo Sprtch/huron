@@ -56,6 +56,21 @@ export const PartProvider = (props) => {
       });
   };
 
+  const importPart = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return axios
+      .post("/api/parts/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(() => {
+        setLoading(true);
+        setTimeout(fetchPart, 3000);
+      });
+  };
+
   useEffect(() => fetchPart(), []);
 
   return (
@@ -65,8 +80,7 @@ export const PartProvider = (props) => {
         loadingParts: loading,
         fetch: fetchPart,
         filter: filterPart,
-        update: null,
-        edit: null,
+        importCSV: importPart,
         add: addPart,
       }}
     >

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { PartContext } from "../models/Parts";
-import { PlainInput, ExpandInput } from "../component/Input";
+import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { CardHeaderSearch } from "../component/Card";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
@@ -57,19 +57,11 @@ const PartImportModal = ({ add }) => {
   );
 };
 
-const BulkImportModal = () => {
+const BulkImportModal = ({ importCSV }) => {
   const [modal, setModal] = useState(false);
 
   const send = (_) => {
-    const formData = new FormData();
-    const imagefile = document.querySelector("#file");
-    formData.append("file", imagefile.files[0]);
-    axios
-      .post("/api/parts/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
+    importCSV(document.querySelector("#file").files[0])
       .then((_) => {
         setModal(false);
       })
@@ -195,7 +187,7 @@ export default () => {
             onChange={(ev) => setFilter(ev.target.value)}
           >
             <PartImportModal add={ctx.add} />
-            <BulkImportModal />
+            <BulkImportModal importCSV={ctx.importCSV} />
           </CardHeaderSearch>
 
           {ctx.loadingParts ? (
