@@ -71,6 +71,9 @@ export const PartProvider = (props) => {
       });
   };
 
+  const printPart = (id, number) =>
+    axios.post(`/api/parts/${id}/print`, { number });
+
   useEffect(() => fetchPart(), []);
 
   return (
@@ -81,6 +84,7 @@ export const PartProvider = (props) => {
         fetch: fetchPart,
         filter: filterPart,
         importCSV: importPart,
+        print: printPart,
         add: addPart,
       }}
     >

@@ -3,8 +3,10 @@ import { PartContext } from "../models/Parts";
 import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { CardHeaderSearch } from "../component/Card";
+import { Column, Table, AutoSizer } from "react-virtualized";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import axios from "axios";
+
+import "react-virtualized/styles.css";
 
 const PartImportModal = ({ add }) => {
   const [modal, setModal] = useState(false);
@@ -103,7 +105,7 @@ const BulkImportModal = ({ importCSV }) => {
   );
 };
 
-const PartLine = ({ barcode, name }) => {
+const PrintCell = ({ print, id }) => {
   const [number, setNumber] = React.useState(1);
   const [printing, setPrinting] = React.useState(false);
 
@@ -120,9 +122,9 @@ const PartLine = ({ barcode, name }) => {
   };
   const handlePrint = () => {
     setPrinting(true);
-    axios
-      .post("/api/print", { barcode, name, number })
+    print(id, number)
       .then((_) => {
+        setNumber(1);
         setPrinting(false);
       })
       .catch((_) => {
@@ -131,40 +133,18 @@ const PartLine = ({ barcode, name }) => {
   };
 
   return (
-    <tr>
-      <td>{barcode}</td>
-      <td>{name}</td>
-      <td>
-        <div className="btn-group mr-2" role="group" aria-label="First group">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={decrease}
-          >
-            -
-          </button>
-          <PlainInput type="number" value={number} onChange={handleNumber} />
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={increase}
-          >
-            +
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handlePrint}
-          >
-            {printing ? (
-              <div className="spinner-border" role="status" />
-            ) : (
-              "Print"
-            )}
-          </button>
-        </div>
-      </td>
-    </tr>
+    <div className="btn-group mr-2" role="group" aria-label="First group">
+      <button type="button" className="btn btn-secondary" onClick={decrease}>
+        -
+      </button>
+      <PlainInput type="number" value={number} onChange={handleNumber} />
+      <button type="button" className="btn btn-secondary" onClick={increase}>
+        +
+      </button>
+      <button type="button" className="btn btn-primary" onClick={handlePrint}>
+        {printing ? <div className="spinner-border" role="status" /> : "Print"}
+      </button>
+    </div>
   );
 };
 
@@ -193,20 +173,32 @@ export default () => {
           {ctx.loadingParts ? (
             <Loading />
           ) : (
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">Barcode</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Print</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ctx.filter(filter).map((x) => (
-                  <PartLine {...x} key={x.barcode} />
-                ))}
-              </tbody>
-            </table>
+            <div style={{ height: 600 }}>
+              <AutoSizer>
+                {({ height, width }) => (
+                  <Table
+                    width={width}
+                    height={height}
+                    headerHeight={20}
+                    rowHeight={50}
+                    rowCount={ctx.filter(filter).length}
+                    rowGetter={({ index }) => ctx.filter(filter)[index]}
+                  >
+                    <Column label="#" dataKey="id" width={50} />
+                    <Column label="Barcode" dataKey="barcode" width={250} />
+                    <Column width={600} label="Name" dataKey="name" />
+                    <Column
+                      width={300}
+                      label="Print"
+                      dataKey="id"
+                      cellRenderer={({ cellData }) => (
+                        <PrintCell print={ctx.print} id={cellData} />
+                      )}
+                    />
+                  </Table>
+                )}
+              </AutoSizer>
+            </div>
           )}
         </div>
       )}
