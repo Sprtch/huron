@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { PartContext } from "../models/Parts";
 import { PlainInput, ExpandInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
+import { CardHeaderSearch } from "../component/Card";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import axios from "axios";
 
@@ -200,26 +201,14 @@ export default () => {
               ↻
             </button>
           </h1>
-          <div className="py-1">
-            <div className="card bg-primary">
-              <div className="card-body">
-                <div className="row">
-                  <div className="col">
-                    <ExpandInput
-                      type="text"
-                      value={filter}
-                      onChange={(ev) => setFilter(ev.target.value)}
-                      placeholder="Filter..."
-                    />
-                  </div>
-                  <div className="col-auto text-right">
-                    <PartImportModal />
-                    <BulkImportModal />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
+          <CardHeaderSearch
+            value={filter}
+            onChange={(ev) => setFilter(ev.target.value)}
+          >
+            <PartImportModal />
+            <BulkImportModal />
+          </CardHeaderSearch>
 
           {ctx.loadingParts ? (
             <Loading />

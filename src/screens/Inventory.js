@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { InventoryContext } from "../models/Inventory";
 import { PartContext } from "../models/Parts";
 import { Loading } from "../component/Spinner";
-import { PlainInput, ExpandInput } from "../component/Input";
+import { CardHeaderSearch } from "../component/Card";
+import { PlainInput } from "../component/Input";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import axios from "axios";
 
@@ -145,27 +146,13 @@ export default () => {
             </button>
           </h1>
 
-          <div className="py-1">
-            <div className="card bg-primary">
-              <div className="card-body">
-                <div className="row">
-                  <div className="col">
-                    <ExpandInput
-                      type="text"
-                      value={filter}
-                      onChange={(ev) => setFilter(ev.target.value)}
-                      placeholder="Filter..."
-                    />
-                  </div>
-                  <div className="col-auto text-right">
-                    <DownloadButton />
-                    <AddPartModal />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          <CardHeaderSearch
+            value={filter}
+            onChange={(ev) => setFilter(ev.target.value)}
+          >
+            <DownloadButton />
+            <AddPartModal />
+          </CardHeaderSearch>
           {ctx.loadingInventory ? (
             <Loading />
           ) : (
