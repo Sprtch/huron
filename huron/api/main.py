@@ -53,6 +53,19 @@ def api_print():
 
 
     return jsonify({'response': 'ok'})
+
+@api.route('/api/parts/<int:part_id>/createinventory', methods=['GET', 'POST'])
+def api_part_detail_create_inventory(part_id):
+    in_db = Part.query.get(part_id)
+    if in_db is None:
+        return jsonify({"response": "error"})
+
+    i = Inventory(part=in_db, quantity=0)
+    db.session.add(i)
+    db.session.commit()
+
+    return jsonify(i.to_dict())
+
 @api.route('/api/parts/<int:part_id>/print', methods=['GET', 'POST'])
 def api_part_detail_print(part_id):
     number = 1

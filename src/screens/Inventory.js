@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { InventoryContext } from "../models/Inventory";
 import { PartContext } from "../models/Parts";
 import { Loading } from "../component/Spinner";
 import { CardHeaderSearch } from "../component/Card";
 import { PlainInput } from "../component/Input";
+import { Column, Table, AutoSizer } from "react-virtualized";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import axios from "axios";
 
-const AddPartModal = () => {
+const AddPartModal = ({ create }) => {
   const [modal, setModal] = useState(false);
+  const [filter, setFilter] = useState("");
 
   const toggle = () => setModal(!modal);
+
+  const AddCell = ({ create }) => {
+    return <Button onClick={create}>Add</Button>;
+  };
 
   return (
     <span>
@@ -24,28 +29,41 @@ const AddPartModal = () => {
         <ModalBody>
           <PartContext.Consumer>
             {(ctx) => (
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th scope="col">Barcode</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Add</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ctx.parts.map((x) => (
-                    <tr>
-                      <td>{x.barcode}</td>
-                      <td>{x.name}</td>
-                      <td>
-                        <button type="button" className="btn btn-primary">
-                          Add
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <span>
+                <CardHeaderSearch
+                  value={filter}
+                  onChange={(ev) => setFilter(ev.target.value)}
+                />
+
+                <div style={{ height: 400 }}>
+                  <AutoSizer>
+                    {({ height, width }) => (
+                      <Table
+                        width={width}
+                        height={height}
+                        headerHeight={20}
+                        rowHeight={50}
+                        rowCount={ctx.filter(filter).length}
+                        rowGetter={({ index }) => ctx.filter(filter)[index]}
+                      >
+                        <Column label="Barcode" dataKey="barcode" width={250} />
+                        <Column width={500} label="Name" dataKey="name" />
+                        <Column
+                          width={100}
+                          label="Print"
+                          dataKey="id"
+                          cellRenderer={({ cellData }) => (
+                            <AddCell
+                              create={() => create(cellData)}
+                              id={cellData}
+                            />
+                          )}
+                        />
+                      </Table>
+                    )}
+                  </AutoSizer>
+                </div>
+              </span>
             )}
           </PartContext.Consumer>
         </ModalBody>
@@ -142,7 +160,7 @@ export default () => {
             onChange={(ev) => setFilter(ev.target.value)}
           >
             <DownloadButton />
-            <AddPartModal />
+            <AddPartModal create={ctx.create} />
           </CardHeaderSearch>
           {ctx.loadingInventory ? (
             <Loading />

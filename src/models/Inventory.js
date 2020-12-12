@@ -51,6 +51,11 @@ export const InventoryProvider = (props) => {
         );
       });
 
+  const createInventory = (id) =>
+    axios
+      .post(`/api/parts/${id}/createinventory`)
+      .then((res) => setInventory(inventory.concat(res.data)));
+
   useEffect(() => fetchInventory(), []);
 
   return (
@@ -61,6 +66,7 @@ export const InventoryProvider = (props) => {
         fetch: fetchInventory,
         filter: filterInventory,
         update: null,
+        create: createInventory,
         edit: editInventory,
       }}
     >
