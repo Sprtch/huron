@@ -6,68 +6,68 @@ import { CardHeaderSearch } from "../component/Card";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import axios from "axios";
 
-const PartImportModal = () => (
-  <span>
-    <div className="modal" id="addModal" tabIndex="-1" role="dialog">
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Add part</h5>
-            <button
-              type="button"
-              className="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
+const PartImportModal = () => {
+  const [modal, setModal] = useState(false);
+  const [barcode, setBarcode] = useState("");
+  const [name, setName] = useState("");
+
+  const toggle = () => setModal(!modal);
+
+  const send = (_) => {
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("barcode", barcode);
+    setBarcode("");
+    setName("");
+    axios
+      .post("/api/parts/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((_) => {
+        setModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  return (
+    <span>
+      <Button color="light" className="mr-2" onClick={toggle}>
+        Add part
+      </Button>
+      <Modal isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
+        <ModalBody>
+          <div className="input-group">
+            <input
+              value={barcode}
+              className="form-control"
+              placeholder="Enter barcode"
+              onChange={(ev) => setBarcode(ev.target.value)}
+            />
+            <input
+              value={name}
+              className="form-control"
+              placeholder="Enter part name"
+              onChange={(ev) => setName(ev.target.value)}
+            />
+            <button className="btn btn-primary " onClick={send}>
+              Submit
             </button>
           </div>
-          <div className="modal-body">
-            <form
-              encType="multipart/form-data"
-              action="/api/parts/"
-              className="form-inline"
-              method="post"
-            >
-              <div className="form-group mb-2">
-                <input
-                  type="text"
-                  name="barcode"
-                  className="form-control"
-                  id="barcodeInput"
-                  aria-describedby="barcodeHelp"
-                  placeholder="Enter barcode"
-                />
-              </div>
-              <div className="form-group mb-2">
-                <input
-                  type="text"
-                  name="name"
-                  className="form-control"
-                  id="nameInput"
-                  placeholder="Enter part name"
-                />
-              </div>
-              <div className="form-group mb-2">
-                <button type="submit" className="btn btn-primary mb-2">
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button
-      type="button"
-      className="btn btn-light mr-2"
-      data-toggle="modal"
-      data-target="#addModal"
-    >
-      Add part
-    </button>
-  </span>
-);
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </span>
+  );
+};
 
 const BulkImportModal = () => {
   const [modal, setModal] = useState(false);
