@@ -17,6 +17,10 @@ api = Blueprint(
    __name__,
 )
 
+def is_csv(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() == 'csv'
+
 @api.route('/api/print', methods=['POST'])
 def api_print():
     form = request.get_json()
@@ -33,9 +37,8 @@ def api_print():
         else:
             number = 1
 
-    for _ in range(number):
-        if in_db:
-            in_db.printed()
+    if in_db:
+        in_db.printed(number)
     db.session.commit()
 
     chan = 'victoria'
@@ -48,11 +51,37 @@ def api_print():
     else:
        current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
 
-    return jsonify({'response': 'ok'})
 
-def is_csv(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() == 'csv'
+    return jsonify({'response': 'ok'})
+@api.route('/api/parts/<int:part_id>/print', methods=['GET', 'POST'])
+def api_part_detail_print(part_id):
+    number = 1
+    if request.method == 'POST':
+       form = request.get_json()
+       n = form.get("number")
+       if isinstance(n, str) and n.isnumeric():
+           number = int(n)
+       elif isinstance(n, int):
+           number= n
+
+    in_db = Part.query.get(part_id)
+    if in_db is None:
+        return jsonify({"response": "error"})
+
+    in_db.printed(number)
+    db.session.commit()
+
+    chan = 'victoria'
+    ipc_msg = ipc_create_print_message({}, name=in_db.name, barcode=in_db.barcode, number=number,origin='huron')._asdict()
+    if redis_subscribers_num(r, chan):
+       r.publish(
+             chan,
+             json.dumps(ipc_msg)
+       )
+    else:
+       current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
+
+    return jsonify({'response': 'ok'})
 
 @api.route('/api/parts/', methods=['GET', 'POST'])
 def api_parts():
@@ -76,9 +105,11 @@ def api_parts():
                 file.save(filename)
                 executor.submit(Part.import_csv, filename, {"default_code": "name", "barcode": "barcode"})
 
-        return jsonify({"response": "ok"})
+            return jsonify({"response": "ok"})
     else:
         return jsonify([x.to_dict() for x in Part.query.all()])
+
+    return jsonify({"response": "error"})
 
 @api.route('/api/inventory/export.csv', methods=['GET'])
 def api_inventory_export():
