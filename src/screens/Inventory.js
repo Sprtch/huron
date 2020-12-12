@@ -7,22 +7,41 @@ import { PlainInput } from "../component/Input";
 import { Column, Table, AutoSizer } from "react-virtualized";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
-const AddPartModal = ({ create }) => {
+const AddPartModal = ({ inventory, create }) => {
   const [modal, setModal] = useState(false);
   const [filter, setFilter] = useState("");
 
   const toggle = () => setModal(!modal);
 
   const AddCell = ({ create }) => {
-    return <Button onClick={create}>Add</Button>;
+    const [added, setAdded] = useState(false);
+    const startCreation = () => {
+      setAdded(true);
+      setTimeout(create, 1000);
+    };
+    if (added) {
+      return (
+        <Button style={{ width: "55px" }} color="success" disabled>
+          {" ✅ "}
+        </Button>
+      );
+    } else {
+      return (
+        <Button style={{ width: "55px" }} onClick={startCreation}>
+          Add
+        </Button>
+      );
+    }
   };
+
+  const exclude = (parts, ids) => parts.filter((x) => !ids.includes(x.id));
 
   return (
     <span>
       <Button color="light" className="mr-2" onClick={toggle}>
         Import Part
       </Button>
-      <Modal isOpen={modal} toggle={toggle}>
+      <Modal size="lg" isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>
           {"Create inventory entry for an existing part"}
         </ModalHeader>
@@ -43,8 +62,18 @@ const AddPartModal = ({ create }) => {
                         height={height}
                         headerHeight={20}
                         rowHeight={50}
-                        rowCount={ctx.filter(filter).length}
-                        rowGetter={({ index }) => ctx.filter(filter)[index]}
+                        rowCount={
+                          exclude(
+                            ctx.filter(filter),
+                            inventory.map((x) => x.part.id)
+                          ).length
+                        }
+                        rowGetter={({ index }) =>
+                          exclude(
+                            ctx.filter(filter),
+                            inventory.map((x) => x.part.id)
+                          )[index]
+                        }
                       >
                         <Column label="Barcode" dataKey="barcode" width={250} />
                         <Column width={500} label="Name" dataKey="name" />
@@ -160,7 +189,7 @@ export default () => {
             onChange={(ev) => setFilter(ev.target.value)}
           >
             <DownloadButton />
-            <AddPartModal create={ctx.create} />
+            <AddPartModal inventory={ctx.inventory} create={ctx.create} />
           </CardHeaderSearch>
           {ctx.loadingInventory ? (
             <Loading />
