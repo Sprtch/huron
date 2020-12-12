@@ -65,6 +65,7 @@ def api_parts():
             part = Part(name=name, barcode=barcode)
             db.session.add(part)
             db.session.commit()
+            return jsonify(part.to_dict())
         elif 'file' in files:
             file = files['file']
             if file.filename == '':
