@@ -125,7 +125,7 @@ const PrintCell = ({ print, id }) => {
     print(id, number)
       .then((_) => {
         setNumber(1);
-        setPrinting(false);
+        setTimeout(() => setPrinting(false), 1000);
       })
       .catch((_) => {
         setPrinting(false);
@@ -141,8 +141,21 @@ const PrintCell = ({ print, id }) => {
       <button type="button" className="btn btn-secondary" onClick={increase}>
         +
       </button>
-      <button type="button" className="btn btn-primary" onClick={handlePrint}>
-        {printing ? <div className="spinner-border" role="status" /> : "Print"}
+      <button
+        style={{ width: "55px" }}
+        type="button"
+        className="btn btn-primary"
+        onClick={handlePrint}
+      >
+        {printing ? (
+          <div
+            style={{ width: "15px", height: "15px" }}
+            className="spinner-border"
+            role="status"
+          />
+        ) : (
+          "Print"
+        )}
       </button>
     </div>
   );
