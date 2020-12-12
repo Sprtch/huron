@@ -74,14 +74,14 @@ const InventoryLine = ({ id, part, quantity, edit }) => {
     const [editing, setEditing] = useState(false);
     const [qquantity, setQuantity] = useState(quantity);
 
-    const handleNumber = (ev) => {
-      setQuantity(ev.target.value);
-    };
-
     if (editing) {
       return (
         <div className="btn-group mr-2" role="group" aria-label="invquantity">
-          <PlainInput type="number" value={qquantity} onChange={handleNumber} />
+          <PlainInput
+            type="number"
+            value={qquantity}
+            onChange={(ev) => setQuantity(ev.target.value)}
+          />
           <button
             type="button"
             className="btn btn-secondary"
