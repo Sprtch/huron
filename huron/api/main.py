@@ -43,7 +43,7 @@ def api_print():
 
     msg = IpcPrintMessage(name=name, barcode=barcode, number=number, origin=IpcOrigin.HURON)
     if redis_send_to_print(r, 'victoria', msg) is None:
-       current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
+       current_app.logger.warning("No recipient for the msg: '%s'" % (str(msg)))
 
     return jsonify({'response': 'ok'})
 
@@ -79,7 +79,7 @@ def api_part_detail_print(part_id):
 
     msg = IpcPrintMessage(name=in_db.name, barcode=in_db.barcode, number=number, origin=IpcOrigin.HURON)
     if redis_send_to_print(r, 'victoria', msg) is None:
-       current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
+       current_app.logger.warning("No recipient for the msg: '%s'" % (str(msg)))
 
     return jsonify({'response': 'ok'})
 
