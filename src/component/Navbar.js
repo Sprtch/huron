@@ -5,7 +5,7 @@ import { Link, NavLink as RRNavLink } from "react-router-dom";
 export default () => (
   <div>
     <Navbar color="dark" dark expand="md">
-      <NavbarBrand tag={Link} href="/">
+      <NavbarBrand tag={Link} to="/">
         Separtch Printing Page
       </NavbarBrand>
       <Nav className="mr-auto" navbar>
