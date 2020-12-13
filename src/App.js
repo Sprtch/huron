@@ -18,7 +18,7 @@ class App extends Component {
             <div>
               <Navbar />
 
-              <div style={{ marginTop: "60px" }}>
+              <div>
                 <Switch>
                   <Route exact path="/parts" component={Parts} />
                   <Route exact path="/inventory" component={Inventory} />
