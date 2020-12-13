@@ -111,6 +111,13 @@ def api_parts():
 
     return jsonify({"response": "error"})
 
+@api.route('/api/inventory/delete', methods=['GET'])
+def api_inventory_delete():
+    if request.method == 'GET':
+        Inventory.query.delete()
+        db.session.commit()
+        return jsonify([x.to_dict() for x in Inventory.query.all()])
+
 @api.route('/api/inventory/export.csv', methods=['GET'])
 def api_inventory_export():
     if request.method == 'GET':
