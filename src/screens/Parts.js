@@ -26,7 +26,7 @@ const PartImportModal = ({ add }) => {
   return (
     <span>
       <Button color="light" className="mr-2" onClick={toggle}>
-        Add part
+        ➕
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
@@ -77,10 +77,12 @@ const BulkImportModal = ({ importCSV }) => {
   return (
     <span>
       <Button color="light" className="mr-2" onClick={toggle}>
-        Add part from CSV
+        📂
       </Button>
       <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>{"Bulk part import"}</ModalHeader>
+        <ModalHeader toggle={toggle}>
+          {"Bulk part import from .csv file"}
+        </ModalHeader>
         <ModalBody>
           <div className="form-inline">
             <input type="hidden" name="barcode" />
@@ -167,20 +169,17 @@ export default () => {
   return (
     <PartContext.Consumer>
       {(ctx) => (
-        <div className="container">
-          <h1>
-            Parts{" "}
-            <button onClick={ctx.fetch} className="btn btn-link">
-              ↻
-            </button>
-          </h1>
-
+        <div>
+          <h1>Parts</h1>
           <CardHeaderSearch
             value={filter}
             onChange={(ev) => setFilter(ev.target.value)}
           >
             <PartImportModal add={ctx.add} />
             <BulkImportModal importCSV={ctx.importCSV} />
+            <Button color="secondary" onClick={ctx.fetch}>
+              ↻
+            </Button>
           </CardHeaderSearch>
 
           {ctx.loadingParts ? (
@@ -192,7 +191,7 @@ export default () => {
                   <Table
                     width={width}
                     height={height}
-                    headerHeight={20}
+                    headerHeight={30}
                     rowHeight={50}
                     rowCount={ctx.filter(filter).length}
                     rowGetter={({ index }) => ctx.filter(filter)[index]}
