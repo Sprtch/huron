@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { PartContext } from "../models/Parts";
 import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
+import { TableWrapper } from "../component/Table";
 import { CardHeaderSearch } from "../component/Card";
 import { Column, Table, AutoSizer } from "react-virtualized";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-
-import "react-virtualized/styles.css";
 
 const PartImportModal = ({ add }) => {
   const [modal, setModal] = useState(false);
@@ -170,7 +169,6 @@ export default () => {
     <PartContext.Consumer>
       {(ctx) => (
         <div>
-          <h1>Parts</h1>
           <CardHeaderSearch
             value={filter}
             onChange={(ev) => setFilter(ev.target.value)}
@@ -185,32 +183,28 @@ export default () => {
           {ctx.loadingParts ? (
             <Loading />
           ) : (
-            <div style={{ height: 600 }}>
-              <AutoSizer>
-                {({ height, width }) => (
-                  <Table
-                    width={width}
-                    height={height}
-                    headerHeight={30}
-                    rowHeight={50}
-                    rowCount={ctx.filter(filter).length}
-                    rowGetter={({ index }) => ctx.filter(filter)[index]}
-                  >
-                    <Column label="#" dataKey="id" width={50} />
-                    <Column label="Barcode" dataKey="barcode" width={250} />
-                    <Column width={600} label="Name" dataKey="name" />
-                    <Column
-                      width={300}
-                      label="Print"
-                      dataKey="id"
-                      cellRenderer={({ cellData }) => (
-                        <PrintCell print={ctx.print} id={cellData} />
-                      )}
-                    />
-                  </Table>
+            <TableWrapper
+              rows={ctx.filter(filter)}
+              rowCount={ctx.filter(filter).length}
+              rowGetter={({ index }) => ctx.filter(filter)[index]}
+            >
+              <Column label="#" dataKey="id" width={50} />
+              <Column
+                width={250}
+                label="Barcode"
+                dataKey="barcode"
+                style={{ display: "flex", alignItems: "center" }}
+              />
+              <Column width={600} label="Name" dataKey="name" />
+              <Column
+                width={300}
+                label="Print"
+                dataKey="id"
+                cellRenderer={({ cellData }) => (
+                  <PrintCell print={ctx.print} id={cellData} />
                 )}
-              </AutoSizer>
-            </div>
+              />
+            </TableWrapper>
           )}
         </div>
       )}
