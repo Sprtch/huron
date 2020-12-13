@@ -2,7 +2,7 @@ import React from "react";
 import { ExpandInput } from "../component/Input";
 
 export const CardHeaderSearch = (props) => (
-  <div className="py-1">
+  <div className="py-1 px-3">
     <div className="card bg-primary">
       <div className="card-body">
         <div className="row">
