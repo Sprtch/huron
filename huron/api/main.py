@@ -1,5 +1,5 @@
 from huron.core.executor import executor
-from despinassy.ipc import redis_subscribers_num, ipc_create_print_message
+from despinassy.ipc import redis_send_to_print, IpcPrintMessage, IpcOrigin
 from despinassy import Inventory, Part, db
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app, send_file
 import os
@@ -41,16 +41,9 @@ def api_print():
         in_db.printed(number)
     db.session.commit()
 
-    chan = 'victoria'
-    ipc_msg = ipc_create_print_message({}, name=name, barcode=barcode, number=number,origin='huron')._asdict()
-    if redis_subscribers_num(r, chan):
-       r.publish(
-             chan,
-             json.dumps(ipc_msg)
-       )
-    else:
+    msg = IpcPrintMessage(name=name, barcode=barcode, number=number, origin=IpcOrigin.HURON)
+    if redis_send_to_print(r, 'victoria', msg) is None:
        current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
-
 
     return jsonify({'response': 'ok'})
 
@@ -84,14 +77,8 @@ def api_part_detail_print(part_id):
     in_db.printed(number)
     db.session.commit()
 
-    chan = 'victoria'
-    ipc_msg = ipc_create_print_message({}, name=in_db.name, barcode=in_db.barcode, number=number,origin='huron')._asdict()
-    if redis_subscribers_num(r, chan):
-       r.publish(
-             chan,
-             json.dumps(ipc_msg)
-       )
-    else:
+    msg = IpcPrintMessage(name=in_db.name, barcode=in_db.barcode, number=number, origin=IpcOrigin.HURON)
+    if redis_send_to_print(r, 'victoria', msg) is None:
        current_app.logger.warning("No recipient for the msg: '%s'" % (str(ipc_msg)))
 
     return jsonify({'response': 'ok'})
