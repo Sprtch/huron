@@ -21,6 +21,7 @@ export const TWrapper = styled.div`
     border-top: 1px solid #b7b9bd;
   }
   .ReactVirtualized__Table__row {
+    flex-wrap: wrap;
     justify-content: center;
     display: flex;
     flex-direction: row;
@@ -81,7 +82,7 @@ const rowRenderer = ({ index }) => {
 
 export const TableWrapper = (props) => (
   <TWrapper>
-    <div style={{ height: "85vh" }}>
+    <div style={{ height: props.size }}>
       <AutoSizer>
         {({ height, width }) => (
           <Table
@@ -89,7 +90,7 @@ export const TableWrapper = (props) => (
             height={height}
             headerHeight={30}
             rowStyle={rowRenderer}
-            rowHeight={50}
+            rowHeight={width < 820 ? 100 : 50}
             {...props}
           />
         )}

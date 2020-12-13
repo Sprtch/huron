@@ -4,7 +4,7 @@ import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { TableWrapper } from "../component/Table";
 import { CardHeaderSearch } from "../component/Card";
-import { Column, Table, AutoSizer } from "react-virtualized";
+import { Column } from "react-virtualized";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 const PartImportModal = ({ add }) => {
@@ -184,20 +184,21 @@ export default () => {
             <Loading />
           ) : (
             <TableWrapper
+              size="84vh"
               rows={ctx.filter(filter)}
               rowCount={ctx.filter(filter).length}
               rowGetter={({ index }) => ctx.filter(filter)[index]}
             >
               <Column label="#" dataKey="id" width={50} />
               <Column
-                width={250}
+                width={200}
                 label="Barcode"
                 dataKey="barcode"
                 style={{ display: "flex", alignItems: "center" }}
               />
               <Column width={600} label="Name" dataKey="name" />
               <Column
-                width={300}
+                width={200}
                 label="Print"
                 dataKey="id"
                 cellRenderer={({ cellData }) => (
