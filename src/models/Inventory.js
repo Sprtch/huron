@@ -32,9 +32,10 @@ export const InventoryProvider = (props) => {
         (acc, current) =>
           acc.filter(
             (x) =>
-              (x.barcode &&
-                x.barcode.toLowerCase().includes(current.toLowerCase())) ||
-              (x.name && x.name.toLowerCase().includes(current.toLowerCase()))
+              (x.part.barcode &&
+                x.part.barcode.toLowerCase().includes(current.toLowerCase())) ||
+              (x.part.name &&
+                x.part.name.toLowerCase().includes(current.toLowerCase()))
           ),
         inventory
       );
