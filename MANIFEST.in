@@ -1,1 +1,2 @@
 recursive-include huron/view *
+recursive-include src/static *
