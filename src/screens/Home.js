@@ -1,57 +1,72 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import { ExpandInput } from "../component/Input";
+import { Card, Button, CardTitle } from "reactstrap";
+import axios from "axios";
 
 const ManualPrint = () => {
+  const [name, setName] = useState("");
+  const [barcode, setBarcode] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const sendPrint = () => {
+    if (!loading) {
+      setLoading(true);
+      setTimeout(() => setLoading(false), 1000);
+      axios.post("/api/print", { name, barcode }).then(() => {
+        setName("");
+        setBarcode("");
+      });
+    }
+  };
+
   return (
-    <div className="card-body">
-      <form action="/api/print" className="form-inline" method="post">
-        <div className="form-group mb-2">
-          <label htmlFor="barcodeInput">Barcode Input</label>
-          <input
+    <Card body inverse color="info">
+      <CardTitle tag="h5">Manual printing form</CardTitle>
+
+      <div className="row">
+        <div className="col">
+          <ExpandInput
             type="text"
-            name="barcode"
-            className="form-control"
-            id="barcodeInput"
-            aria-describedby="barcodeHelp"
-            placeholder="Enter barcode"
+            value={name}
+            onChange={(ev) => setName(ev.target.value)}
+            placeholder="Enter Name..."
           />
         </div>
-        <div className="form-group mb-2">
-          <input
+        <div className="col">
+          <ExpandInput
             type="text"
-            name="name"
-            className="form-control"
-            id="nameInput"
-            placeholder="Enter part name"
+            value={barcode}
+            onChange={(ev) => setBarcode(ev.target.value)}
+            placeholder="Enter barcode..."
           />
         </div>
-        <div className="mb-2">
-          <input
-            type="number"
-            name="number"
-            className="form-control"
-            step="1"
-            defaultValue="1"
-            placeholder="Number"
-          />
+        <div className="col-auto text-right">
+          <Button
+            onClick={sendPrint}
+            style={{ width: "95px", height: "35px" }}
+            color="secondary"
+          >
+            {loading ? (
+              <div
+                style={{ width: "15px", height: "15px" }}
+                className="spinner-border"
+                role="status"
+              />
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </div>
-        <button type="submit" className="btn btn-primary mb-2">
-          Print
-        </button>
-      </form>
-    </div>
+      </div>
+    </Card>
   );
 };
 
-export default class Home extends Component {
-  render() {
-    return (
-      <div className="container">
-        <h1>Separtech Printer page</h1>
-        <div className="card manual-input-card">
-          <div className="card-header">Manual printing form</div>
-          <ManualPrint />
-        </div>
-      </div>
-    );
-  }
-}
+export default () => {
+  return (
+    <div className="container">
+      <h1>Separtech Printer page</h1>
+      <ManualPrint />
+    </div>
+  );
+};
