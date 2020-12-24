@@ -13,20 +13,22 @@ LOGGING_PATH = "/var/log/zebra.log"
 SAVE_PATH = "/tmp/"
 
 api = Blueprint(
-   'api', 
-   __name__,
+    'api',
+    __name__,
 )
+
 
 def is_csv(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() == 'csv'
+
 
 @api.route('/api/print', methods=['POST'])
 def api_print():
     form = request.get_json()
     if form is None:
         form = request.form
-    barcode = form["barcode"]
+    barcode = form.get("barcode", "")
     name = form.get("name", "")
     number = form.get("number", "1")
 
@@ -41,11 +43,16 @@ def api_print():
         in_db.printed(number)
     db.session.commit()
 
-    msg = IpcPrintMessage(name=name, barcode=barcode, number=number, origin=IpcOrigin.HURON)
+    msg = IpcPrintMessage(name=name,
+                          barcode=barcode,
+                          number=number,
+                          origin=IpcOrigin.HURON)
     if redis_send_to_print(r, 'victoria', msg) is None:
-       current_app.logger.warning("No recipient for the msg: '%s'" % (str(msg)))
+        current_app.logger.warning("No recipient for the msg: '%s'" %
+                                   (str(msg)))
 
     return jsonify({'response': 'ok'})
+
 
 @api.route('/api/parts/<int:part_id>/createinventory', methods=['GET', 'POST'])
 def api_part_detail_create_inventory(part_id):
@@ -59,16 +66,17 @@ def api_part_detail_create_inventory(part_id):
 
     return jsonify(i.to_dict())
 
+
 @api.route('/api/parts/<int:part_id>/print', methods=['GET', 'POST'])
 def api_part_detail_print(part_id):
     number = 1
     if request.method == 'POST':
-       form = request.get_json()
-       n = form.get("number")
-       if isinstance(n, str) and n.isnumeric():
-           number = int(n)
-       elif isinstance(n, int):
-           number= n
+        form = request.get_json()
+        n = form.get("number")
+        if isinstance(n, str) and n.isnumeric():
+            number = int(n)
+        elif isinstance(n, int):
+            number = n
 
     in_db = Part.query.get(part_id)
     if in_db is None:
@@ -77,11 +85,16 @@ def api_part_detail_print(part_id):
     in_db.printed(number)
     db.session.commit()
 
-    msg = IpcPrintMessage(name=in_db.name, barcode=in_db.barcode, number=number, origin=IpcOrigin.HURON)
+    msg = IpcPrintMessage(name=in_db.name,
+                          barcode=in_db.barcode,
+                          number=number,
+                          origin=IpcOrigin.HURON)
     if redis_send_to_print(r, 'victoria', msg) is None:
-       current_app.logger.warning("No recipient for the msg: '%s'" % (str(msg)))
+        current_app.logger.warning("No recipient for the msg: '%s'" %
+                                   (str(msg)))
 
     return jsonify({'response': 'ok'})
+
 
 @api.route('/api/parts/', methods=['GET', 'POST'])
 def api_parts():
@@ -103,13 +116,17 @@ def api_parts():
                 filename = os.path.join(SAVE_PATH, (file.filename))
                 current_app.logger.info("Saving " + filename)
                 file.save(filename)
-                executor.submit(Part.import_csv, filename, {"default_code": "name", "barcode": "barcode"})
+                executor.submit(Part.import_csv, filename, {
+                    "default_code": "name",
+                    "barcode": "barcode"
+                })
 
             return jsonify({"response": "ok"})
     else:
         return jsonify([x.to_dict() for x in Part.query.all()])
 
     return jsonify({"response": "error"})
+
 
 @api.route('/api/inventory/delete', methods=['GET'])
 def api_inventory_delete():
@@ -118,12 +135,14 @@ def api_inventory_delete():
         db.session.commit()
         return jsonify([x.to_dict() for x in Inventory.query.all()])
 
+
 @api.route('/api/inventory/export.csv', methods=['GET'])
 def api_inventory_export():
     if request.method == 'GET':
         path = os.path.join(SAVE_PATH, 'export.csv')
         Inventory.export_csv(path)
         return send_file(path, as_attachment=True)
+
 
 @api.route('/api/inventory/<int:inventory_id>', methods=['GET', 'POST'])
 def api_inventory_detail(inventory_id):
@@ -132,14 +151,15 @@ def api_inventory_detail(inventory_id):
         return jsonify(None)
 
     if request.method == 'POST':
-       form = request.get_json()
-       quantity = form.get('quantity', x.quantity)
-       if quantity:
-          x.quantity = quantity
+        form = request.get_json()
+        quantity = form.get('quantity', x.quantity)
+        if quantity:
+            x.quantity = quantity
 
-       db.session.commit()
+        db.session.commit()
 
     return jsonify(x.to_dict())
+
 
 @api.route('/api/inventory/', methods=['GET'])
 def api_inventory():
