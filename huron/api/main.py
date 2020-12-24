@@ -1,6 +1,6 @@
 from huron.core.executor import executor
 from despinassy.ipc import redis_send_to_print, IpcPrintMessage, IpcOrigin
-from despinassy import Inventory, Part, db
+from despinassy import Inventory, Part, Printer, db
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app, send_file
 import os
 import redis
@@ -165,3 +165,9 @@ def api_inventory_detail(inventory_id):
 def api_inventory():
     if request.method == 'GET':
         return jsonify([x.to_dict() for x in Inventory.query.all()])
+
+
+@api.route('/api/printer/', methods=['GET'])
+def api_printer():
+    if request.method == 'GET':
+        return jsonify([x.to_dict() for x in Printer.query.all()])

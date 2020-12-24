@@ -19,6 +19,11 @@ export default () => (
             Inventory
           </NavLink>
         </NavItem>
+        <NavItem>
+          <NavLink tag={RRNavLink} to="/printer">
+            Printer
+          </NavLink>
+        </NavItem>
       </Nav>
     </Navbar>
   </div>
