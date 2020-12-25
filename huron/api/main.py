@@ -93,8 +93,9 @@ def api_part_detail_print(part_id):
                           number=number,
                           origin=IpcOrigin.HURON)
     if redis_send_to_print(r, destination, msg) is None:
-        current_app.logger.warning("No recipient for the msg: '%s'" %
-                                   (str(msg)))
+        current_app.logger.warning(
+            "No recipient in channel '%s' for the msg: '%s'" %
+            (destination, str(msg)))
 
     return jsonify({'response': 'ok'})
 

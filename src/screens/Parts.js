@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PartContext } from "../models/Parts";
+import { PrinterContext } from "../models/Printer";
 import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { TableWrapper } from "../component/Table";
@@ -121,9 +122,9 @@ const PrintCell = ({ print, id }) => {
   const handleNumber = (ev) => {
     setNumber(ev.target.value);
   };
-  const handlePrint = () => {
+  const handlePrint = (destination) => {
     setPrinting(true);
-    print(id, number)
+    print(id, number, destination)
       .then((_) => {
         setNumber(1);
         setTimeout(() => setPrinting(false), 1000);
@@ -134,31 +135,43 @@ const PrintCell = ({ print, id }) => {
   };
 
   return (
-    <div className="btn-group mr-2" role="group" aria-label="First group">
-      <button type="button" className="btn btn-secondary" onClick={decrease}>
-        -
-      </button>
-      <PlainInput type="number" value={number} onChange={handleNumber} />
-      <button type="button" className="btn btn-secondary" onClick={increase}>
-        +
-      </button>
-      <button
-        style={{ width: "55px" }}
-        type="button"
-        className="btn btn-primary"
-        onClick={handlePrint}
-      >
-        {printing ? (
-          <div
-            style={{ width: "15px", height: "15px" }}
-            className="spinner-border"
-            role="status"
-          />
-        ) : (
-          "Print"
-        )}
-      </button>
-    </div>
+    <PrinterContext.Consumer>
+      {(ctx) => (
+        <div className="btn-group mr-2" role="group" aria-label="First group">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={decrease}
+          >
+            -
+          </button>
+          <PlainInput type="number" value={number} onChange={handleNumber} />
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={increase}
+          >
+            +
+          </button>
+          <button
+            style={{ width: "55px" }}
+            type="button"
+            className="btn btn-primary"
+            onClick={() => handlePrint(ctx.destination)}
+          >
+            {printing ? (
+              <div
+                style={{ width: "15px", height: "15px" }}
+                className="spinner-border"
+                role="status"
+              />
+            ) : (
+              "Print"
+            )}
+          </button>
+        </div>
+      )}
+    </PrinterContext.Consumer>
   );
 };
 

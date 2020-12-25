@@ -71,8 +71,8 @@ export const PartProvider = (props) => {
       });
   };
 
-  const printPart = (id, number) =>
-    axios.post(`/api/parts/${id}/print`, { number });
+  const printPart = (id, number, destination) =>
+    axios.post(`/api/parts/${id}/print`, { number, destination });
 
   useEffect(() => fetchPart(), []);
 
