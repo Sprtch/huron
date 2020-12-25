@@ -1,6 +1,21 @@
 import React from "react";
 import { Navbar, NavbarBrand, Nav, NavLink, NavItem } from "reactstrap";
-import { Link, NavLink as RRNavLink } from "react-router-dom";
+import { useLocation, Link, NavLink as RRNavLink } from "react-router-dom";
+
+const getName = (link) => {
+  switch (link) {
+    case "/parts":
+      return "Parts printing page";
+    case "/inventory":
+      return "Inventory recap page";
+    case "/printer":
+      return "Printer fleet overview";
+    case "/":
+      return "Home page";
+    default:
+      return link;
+  }
+};
 
 export default () => (
   <div>
@@ -24,6 +39,9 @@ export default () => (
             Printer
           </NavLink>
         </NavItem>
+      </Nav>
+      <Nav style={{ color: "white" }} navbar>
+        <NavItem>{getName(useLocation().pathname)}</NavItem>
       </Nav>
     </Navbar>
   </div>
