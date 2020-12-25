@@ -34,7 +34,7 @@ export const PrinterProvider = (props) => {
     <PrinterContext.Provider
       value={{
         printer: printer,
-        redis: redis,
+        destination: redis,
         loadingPrinter: loading,
         setAsDefault: setAsDefaultPrinter,
         fetch: fetchPrinter,

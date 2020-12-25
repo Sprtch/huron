@@ -86,7 +86,7 @@ export default () => {
               {ctx.printer.map((x) => (
                 <PrinterCard
                   {...x}
-                  inUse={ctx.redis === x.redis}
+                  inUse={ctx.destination === x.redis}
                   setAsDefault={() => ctx.setAsDefault(x)}
                   key={x.id}
                 />
