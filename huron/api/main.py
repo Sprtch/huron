@@ -31,6 +31,7 @@ def api_print():
     barcode = form.get("barcode", "")
     name = form.get("name", "")
     number = form.get("number", "1")
+    destination = form.get("destination") or "victoria"
 
     in_db = Part.query.filter(Part.barcode == barcode).first()
     if type(number) == str:
@@ -47,7 +48,7 @@ def api_print():
                           barcode=barcode,
                           number=number,
                           origin=IpcOrigin.HURON)
-    if redis_send_to_print(r, 'victoria', msg) is None:
+    if redis_send_to_print(r, destination, msg) is None:
         current_app.logger.warning("No recipient for the msg: '%s'" %
                                    (str(msg)))
 
@@ -70,9 +71,11 @@ def api_part_detail_create_inventory(part_id):
 @api.route('/api/parts/<int:part_id>/print', methods=['GET', 'POST'])
 def api_part_detail_print(part_id):
     number = 1
+    destination = 'victoria'
     if request.method == 'POST':
         form = request.get_json()
         n = form.get("number")
+        destination = form.get("destination") or "victoria"
         if isinstance(n, str) and n.isnumeric():
             number = int(n)
         elif isinstance(n, int):
@@ -89,7 +92,7 @@ def api_part_detail_print(part_id):
                           barcode=in_db.barcode,
                           number=number,
                           origin=IpcOrigin.HURON)
-    if redis_send_to_print(r, 'victoria', msg) is None:
+    if redis_send_to_print(r, destination, msg) is None:
         current_app.logger.warning("No recipient for the msg: '%s'" %
                                    (str(msg)))
 
