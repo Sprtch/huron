@@ -74,27 +74,23 @@ const PrinterCard = ({
   );
 };
 
-export default () => {
+export default ({ printer }) => {
   return (
-    <PrinterContext.Consumer>
-      {(ctx) => (
-        <Container>
-          {ctx.loadingPrinter ? (
-            <Loading />
-          ) : (
-            <Row xs="3">
-              {ctx.printer.map((x) => (
-                <PrinterCard
-                  {...x}
-                  inUse={ctx.destination === x.redis}
-                  setAsDefault={() => ctx.setAsDefault(x)}
-                  key={x.id}
-                />
-              ))}
-            </Row>
-          )}
-        </Container>
+    <Container>
+      {printer.loadingPrinter ? (
+        <Loading />
+      ) : (
+        <Row xs="3">
+          {printer.printer.map((x) => (
+            <PrinterCard
+              {...x}
+              inUse={printer.destination === x.redis}
+              setAsDefault={() => printer.setAsDefault(x)}
+              key={x.id}
+            />
+          ))}
+        </Row>
       )}
-    </PrinterContext.Consumer>
+    </Container>
   );
 };

@@ -175,53 +175,51 @@ const PrintCell = ({ print, id }) => {
   );
 };
 
-export default () => {
+export default ({ parts }) => {
   const [filter, setFilter] = useState("");
 
-  return (
-    <PartContext.Consumer>
-      {(ctx) => (
-        <div>
-          <CardHeaderSearch
-            value={filter}
-            onChange={(ev) => setFilter(ev.target.value)}
-          >
-            <PartImportModal add={ctx.add} />
-            <BulkImportModal importCSV={ctx.importCSV} />
-            <Button color="secondary" onClick={ctx.fetch}>
-              ↻
-            </Button>
-          </CardHeaderSearch>
+  const filtered = parts.filter(filter);
 
-          {ctx.loadingParts ? (
-            <Loading />
-          ) : (
-            <TableWrapper
-              size="84vh"
-              rows={ctx.filter(filter)}
-              rowCount={ctx.filter(filter).length}
-              rowGetter={({ index }) => ctx.filter(filter)[index]}
-            >
-              <Column label="#" dataKey="id" width={50} />
-              <Column
-                width={200}
-                label="Barcode"
-                dataKey="barcode"
-                style={{ display: "flex", alignItems: "center" }}
-              />
-              <Column width={600} label="Name" dataKey="name" />
-              <Column
-                width={200}
-                label="Print"
-                dataKey="id"
-                cellRenderer={({ cellData }) => (
-                  <PrintCell print={ctx.print} id={cellData} />
-                )}
-              />
-            </TableWrapper>
-          )}
-        </div>
+  return (
+    <div>
+      <CardHeaderSearch
+        value={filter}
+        onChange={(ev) => setFilter(ev.target.value)}
+      >
+        <PartImportModal add={parts.add} />
+        <BulkImportModal importCSV={parts.importCSV} />
+        <Button color="secondary" onClick={parts.fetch}>
+          ↻
+        </Button>
+      </CardHeaderSearch>
+
+      {parts.loadingParts ? (
+        <Loading />
+      ) : (
+        <TableWrapper
+          size="84vh"
+          rows={filtered}
+          rowCount={filtered.length}
+          rowGetter={({ index }) => filtered[index]}
+        >
+          <Column label="#" dataKey="id" width={50} />
+          <Column
+            width={200}
+            label="Barcode"
+            dataKey="barcode"
+            style={{ display: "flex", alignItems: "center" }}
+          />
+          <Column width={600} label="Name" dataKey="name" />
+          <Column
+            width={200}
+            label="Print"
+            dataKey="id"
+            cellRenderer={({ cellData }) => (
+              <PrintCell print={parts.print} id={cellData} />
+            )}
+          />
+        </TableWrapper>
       )}
-    </PartContext.Consumer>
+    </div>
   );
 };

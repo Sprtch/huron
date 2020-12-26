@@ -109,7 +109,7 @@ const DownloadButton = () => {
   );
 };
 
-export default () => {
+export default ({ inventory }) => {
   const [filter, setFilter] = useState("");
 
   const QuantityCell = ({ quantity, edit }) => {
@@ -156,56 +156,59 @@ export default () => {
     return <Quantity quantity={quantity} />;
   };
 
+  const filtered = inventory.filter(filter);
+
   return (
-    <InventoryContext.Consumer>
-      {(ctx) => (
-        <div>
-          <CardHeaderSearch
-            value={filter}
-            onChange={(ev) => setFilter(ev.target.value)}
-          >
-            <DownloadButton />
-            <AddPartModal inventory={ctx.inventory} create={ctx.create} />
-            <Button color="secondary" onClick={ctx.fetch}>
-              ↻
-            </Button>
-          </CardHeaderSearch>
-          {ctx.loadingInventory ? (
-            <Loading />
-          ) : (
-            <TableWrapper
-              size="84vh"
-              rows={ctx.filter(filter)}
-              rowCount={ctx.filter(filter).length}
-              rowGetter={({ index }) => ctx.filter(filter)[index]}
-            >
-              <Column label="#" dataKey="id" width={50} />
-              <Column
-                width={200}
-                label="Barcode"
-                cellDataGetter={({ rowData }) => rowData.part.barcode}
-                style={{ display: "flex", alignItems: "center" }}
+    <div>
+      <CardHeaderSearch
+        value={filter}
+        onChange={(ev) => setFilter(ev.target.value)}
+      >
+        <DownloadButton />
+        <AddPartModal
+          inventory={inventory.inventory}
+          create={inventory.create}
+        />
+        <Button color="secondary" onClick={inventory.fetch}>
+          ↻
+        </Button>
+      </CardHeaderSearch>
+      {inventory.loadingInventory ? (
+        <Loading />
+      ) : (
+        <TableWrapper
+          size="84vh"
+          rows={filtered}
+          rowCount={filtered.length}
+          rowGetter={({ index }) => filtered[index]}
+        >
+          <Column label="#" dataKey="id" width={50} />
+          <Column
+            width={200}
+            label="Barcode"
+            cellDataGetter={({ rowData }) => rowData.part.barcode}
+            style={{ display: "flex", alignItems: "center" }}
+          />
+          <Column
+            cellDataGetter={({ rowData }) => rowData.part.name}
+            width={400}
+            label="Name"
+          />
+          <Column
+            width={200}
+            label="Print"
+            dataKey="quantity"
+            cellRenderer={({ cellData, rowData }) => (
+              <QuantityCell
+                edit={(quantity) =>
+                  inventory.edit({ id: rowData.id, quantity })
+                }
+                quantity={cellData}
               />
-              <Column
-                cellDataGetter={({ rowData }) => rowData.part.name}
-                width={400}
-                label="Name"
-              />
-              <Column
-                width={200}
-                label="Print"
-                dataKey="quantity"
-                cellRenderer={({ cellData, rowData }) => (
-                  <QuantityCell
-                    edit={(quantity) => ctx.edit({ id: rowData.id, quantity })}
-                    quantity={cellData}
-                  />
-                )}
-              />
-            </TableWrapper>
-          )}
-        </div>
+            )}
+          />
+        </TableWrapper>
       )}
-    </InventoryContext.Consumer>
+    </div>
   );
 };
