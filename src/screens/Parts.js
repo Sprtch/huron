@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { PartContext } from "../models/Parts";
 import { PrinterContext } from "../models/Printer";
 import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { TableWrapper } from "../component/Table";
 import { CardHeaderSearch } from "../component/Card";
 import { Column } from "react-virtualized";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import {
+  Button,
+  Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
 
 const PartImportModal = ({ add }) => {
   const [modal, setModal] = useState(false);
@@ -178,6 +184,20 @@ const PrintCell = ({ print, id }) => {
 export default ({ parts }) => {
   const [filter, setFilter] = useState("");
 
+  const helpRowRenderer = () => {
+    return (
+      <Container style={{ padding: "15px", textAlign: "center" }}>
+        {"There is no 'Parts' in the database."}
+        <br />
+        {"Click on the "}
+        <Button disabled color="light" className="mr-2">
+          📂
+        </Button>
+        {" button to import a '.csv'."}
+      </Container>
+    );
+  };
+
   const filtered = parts.filter(filter);
 
   return (
@@ -201,6 +221,7 @@ export default ({ parts }) => {
           rows={filtered}
           rowCount={filtered.length}
           rowGetter={({ index }) => filtered[index]}
+          noRowsRenderer={helpRowRenderer}
         >
           <Column label="#" dataKey="id" width={50} />
           <Column

@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { InventoryContext } from "../models/Inventory";
 import { PartContext } from "../models/Parts";
 import { Loading } from "../component/Spinner";
 import { CardHeaderSearch } from "../component/Card";
 import { PlainInput } from "../component/Input";
-import { Column, Table, AutoSizer } from "react-virtualized";
+import { Column } from "react-virtualized";
 import { TableWrapper } from "../component/Table";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import {
+  Button,
+  Container,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from "reactstrap";
 
 const AddPartModal = ({ inventory, create }) => {
   const [modal, setModal] = useState(false);
@@ -156,6 +162,28 @@ export default ({ inventory }) => {
     return <Quantity quantity={quantity} />;
   };
 
+  const helpRowRenderer = () => {
+    return (
+      <Container style={{ padding: "15px", textAlign: "center" }}>
+        {"There is no 'Parts' currently in the inventory."}
+        <br />
+        {"Click on the "}
+        <Button disabled color="light" className="mr-2">
+          {"➕"}
+        </Button>
+        {
+          " button located on the header to create an inventory entry for the selected 'Part'."
+        }
+        <br />
+        {"Export the inventory to '.csv' by clicking on the "}
+        <Button disabled color="light" className="mr-2">
+          {"📩"}
+        </Button>
+        {" button."}
+      </Container>
+    );
+  };
+
   const filtered = inventory.filter(filter);
 
   return (
@@ -181,6 +209,7 @@ export default ({ inventory }) => {
           rows={filtered}
           rowCount={filtered.length}
           rowGetter={({ index }) => filtered[index]}
+          noRowsRenderer={helpRowRenderer}
         >
           <Column label="#" dataKey="id" width={50} />
           <Column
