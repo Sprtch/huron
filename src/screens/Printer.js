@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { PrinterContext } from "../models/Printer";
 import { Loading } from "../component/Spinner";
 import {
@@ -75,6 +75,8 @@ const PrinterCard = ({
 };
 
 export default ({ printer }) => {
+  useEffect(() => printer.fetch(), []);
+
   return (
     <Container>
       {printer.loadingPrinter ? (
