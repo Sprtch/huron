@@ -12,13 +12,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Tooltip,
 } from "reactstrap";
 
 const PartImportModal = ({ add }) => {
   const [modal, setModal] = useState(false);
   const [barcode, setBarcode] = useState("");
   const [name, setName] = useState("");
+  const [tooltipOpen, setTooltipOpen] = useState(false);
 
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
   const toggle = () => setModal(!modal);
 
   const send = (_) => {
@@ -31,9 +34,23 @@ const PartImportModal = ({ add }) => {
 
   return (
     <span>
-      <Button color="light" className="mr-2" onClick={toggle}>
+      <Button
+        color="light"
+        className="mr-2"
+        onClick={toggle}
+        id="Tooltip-add-part"
+      >
         ➕
       </Button>
+      <Tooltip
+        placement="top"
+        isOpen={tooltipOpen}
+        target="Tooltip-add-part"
+        toggle={toggleTooltip}
+      >
+        Add part manually to the database
+      </Tooltip>
+
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
         <ModalBody>
@@ -50,9 +67,9 @@ const PartImportModal = ({ add }) => {
               placeholder="Enter part name"
               onChange={(ev) => setName(ev.target.value)}
             />
-            <button className="btn btn-primary " onClick={send}>
+            <Button color="primary" onClick={send}>
               Submit
-            </button>
+            </Button>
           </div>
         </ModalBody>
         <ModalFooter>
@@ -67,6 +84,9 @@ const PartImportModal = ({ add }) => {
 
 const BulkImportModal = ({ importCSV }) => {
   const [modal, setModal] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
   const send = (_) => {
     importCSV(document.querySelector("#file").files[0])
@@ -82,9 +102,22 @@ const BulkImportModal = ({ importCSV }) => {
 
   return (
     <span>
-      <Button color="light" className="mr-2" onClick={toggle}>
+      <Button
+        color="light"
+        className="mr-2"
+        onClick={toggle}
+        id="Tooltip-import"
+      >
         📂
       </Button>
+      <Tooltip
+        placement="top"
+        isOpen={tooltipOpen}
+        target="Tooltip-import"
+        toggle={toggleTooltip}
+      >
+        Import part from .csv file
+      </Tooltip>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>
           {"Bulk part import from .csv file"}
@@ -97,9 +130,9 @@ const BulkImportModal = ({ importCSV }) => {
               <input id="file" type="file" name="file" />
             </div>
             <div className="form-group mb-2">
-              <button className="btn btn-primary mb-2" onClick={send}>
+              <Button color="primary" className="mb-2" onClick={send}>
                 Submit
-              </button>
+              </Button>
             </div>
           </div>
         </ModalBody>
@@ -144,25 +177,16 @@ const PrintCell = ({ print, id }) => {
     <PrinterContext.Consumer>
       {(ctx) => (
         <div className="btn-group mr-2" role="group" aria-label="First group">
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={decrease}
-          >
+          <Button color="secondary" onClick={decrease}>
             -
-          </button>
+          </Button>
           <PlainInput type="number" value={number} onChange={handleNumber} />
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={increase}
-          >
+          <Button color="secondary" onClick={increase}>
             +
-          </button>
-          <button
+          </Button>
+          <Button
             style={{ width: "55px" }}
-            type="button"
-            className="btn btn-primary"
+            color="primary"
             onClick={() => handlePrint(ctx.destination)}
           >
             {printing ? (
@@ -174,10 +198,32 @@ const PrintCell = ({ print, id }) => {
             ) : (
               "Print"
             )}
-          </button>
+          </Button>
         </div>
       )}
     </PrinterContext.Consumer>
+  );
+};
+
+const RefreshButton = ({ refresh }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+
+  return (
+    <>
+      <Button color="secondary" onClick={refresh} id="Tooltip-refresh">
+        ↻
+      </Button>
+      <Tooltip
+        placement="top"
+        isOpen={tooltipOpen}
+        target="Tooltip-refresh"
+        toggle={toggleTooltip}
+      >
+        Reload the part data
+      </Tooltip>
+    </>
   );
 };
 
@@ -208,9 +254,7 @@ export default ({ parts }) => {
       >
         <PartImportModal add={parts.add} />
         <BulkImportModal importCSV={parts.importCSV} />
-        <Button color="secondary" onClick={parts.fetch}>
-          ↻
-        </Button>
+        <RefreshButton refresh={parts.fetch} />
       </CardHeaderSearch>
 
       {parts.loadingParts ? (

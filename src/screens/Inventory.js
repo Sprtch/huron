@@ -12,11 +12,15 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  Tooltip,
 } from "reactstrap";
 
 const AddPartModal = ({ inventory, create }) => {
   const [modal, setModal] = useState(false);
   const [filter, setFilter] = useState("");
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
   const toggle = () => setModal(!modal);
 
@@ -45,9 +49,17 @@ const AddPartModal = ({ inventory, create }) => {
 
   return (
     <span>
-      <Button color="light" className="mr-2" onClick={toggle}>
+      <Button color="light" className="mr-2" onClick={toggle} id="Tooltip-add">
         {"➕"}
       </Button>
+      <Tooltip
+        placement="top"
+        isOpen={tooltipOpen}
+        target="Tooltip-add"
+        toggle={toggleTooltip}
+      >
+        Select parts to add to the inventory
+      </Tooltip>
       <Modal size="lg" isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>
           {"Create inventory entry for an existing part"}
@@ -106,12 +118,46 @@ const AddPartModal = ({ inventory, create }) => {
 };
 
 const DownloadButton = () => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+
   return (
     <a href="/api/inventory/export.csv">
-      <button type="button" className="btn btn-light mr-2">
+      <Button color="light" className="mr-2" id="Tooltip-download">
         {"📩"}
-      </button>
+      </Button>
+      <Tooltip
+        placement="top"
+        isOpen={tooltipOpen}
+        target="Tooltip-download"
+        toggle={toggleTooltip}
+      >
+        Export inventory to .csv
+      </Tooltip>
     </a>
+  );
+};
+
+const RefreshButton = ({ refresh }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+
+  return (
+    <>
+      <Button color="secondary" onClick={refresh} id="Tooltip-refresh">
+        ↻
+      </Button>
+      <Tooltip
+        placement="top"
+        isOpen={tooltipOpen}
+        target="Tooltip-refresh"
+        toggle={toggleTooltip}
+      >
+        Reload the inventory
+      </Tooltip>
+    </>
   );
 };
 
@@ -197,9 +243,7 @@ export default ({ inventory }) => {
           inventory={inventory.inventory}
           create={inventory.create}
         />
-        <Button color="secondary" onClick={inventory.fetch}>
-          ↻
-        </Button>
+        <RefreshButton refresh={inventory.fetch} />
       </CardHeaderSearch>
       {inventory.loadingInventory ? (
         <Loading />
