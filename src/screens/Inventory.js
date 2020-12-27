@@ -3,8 +3,9 @@ import { PartContext } from "../models/Parts";
 import { Loading } from "../component/Spinner";
 import { CardHeaderSearch } from "../component/Card";
 import { PlainInput } from "../component/Input";
-import { Column } from "react-virtualized";
 import { TableWrapper } from "../component/Table";
+import { RefreshButton } from "../component/Button";
+import { Column } from "react-virtualized";
 import {
   Button,
   Container,
@@ -139,28 +140,6 @@ const DownloadButton = () => {
   );
 };
 
-const RefreshButton = ({ refresh }) => {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
-
-  return (
-    <>
-      <Button color="secondary" onClick={refresh} id="Tooltip-refresh">
-        ↻
-      </Button>
-      <Tooltip
-        placement="top"
-        isOpen={tooltipOpen}
-        target="Tooltip-refresh"
-        toggle={toggleTooltip}
-      >
-        Reload the inventory
-      </Tooltip>
-    </>
-  );
-};
-
 export default ({ inventory }) => {
   const [filter, setFilter] = useState("");
 
@@ -243,7 +222,9 @@ export default ({ inventory }) => {
           inventory={inventory.inventory}
           create={inventory.create}
         />
-        <RefreshButton refresh={inventory.fetch} />
+        <RefreshButton refresh={inventory.fetch}>
+          Reload the inventory data
+        </RefreshButton>
       </CardHeaderSearch>
       {inventory.loadingInventory ? (
         <Loading />

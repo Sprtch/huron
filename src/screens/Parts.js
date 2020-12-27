@@ -4,6 +4,7 @@ import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
 import { TableWrapper } from "../component/Table";
 import { CardHeaderSearch } from "../component/Card";
+import { RefreshButton } from "../component/Button";
 import { Column } from "react-virtualized";
 import {
   Button,
@@ -205,28 +206,6 @@ const PrintCell = ({ print, id }) => {
   );
 };
 
-const RefreshButton = ({ refresh }) => {
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-
-  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
-
-  return (
-    <>
-      <Button color="secondary" onClick={refresh} id="Tooltip-refresh">
-        ↻
-      </Button>
-      <Tooltip
-        placement="top"
-        isOpen={tooltipOpen}
-        target="Tooltip-refresh"
-        toggle={toggleTooltip}
-      >
-        Reload the part data
-      </Tooltip>
-    </>
-  );
-};
-
 export default ({ parts }) => {
   const [filter, setFilter] = useState("");
 
@@ -254,7 +233,9 @@ export default ({ parts }) => {
       >
         <PartImportModal add={parts.add} />
         <BulkImportModal importCSV={parts.importCSV} />
-        <RefreshButton refresh={parts.fetch} />
+        <RefreshButton refresh={parts.fetch}>
+          Reload the part data
+        </RefreshButton>
       </CardHeaderSearch>
 
       {parts.loadingParts ? (
