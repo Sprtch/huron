@@ -8,8 +8,8 @@ const getName = (link) => {
       return "Parts printing page";
     case "/inventory":
       return "Inventory recap page";
-    case "/printer":
-      return "Printer fleet overview";
+    case "/fleet":
+      return "Printer and Scanner fleet overview";
     case "/":
       return "Home page";
     default:
@@ -35,8 +35,8 @@ export default () => (
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink tag={RRNavLink} to="/printer">
-            Printer
+          <NavLink tag={RRNavLink} to="/fleet">
+            Fleet
           </NavLink>
         </NavItem>
       </Nav>

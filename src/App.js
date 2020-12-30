@@ -9,6 +9,7 @@ import Parts from "./screens/Parts";
 import { PartProvider, PartContext } from "./models/Parts";
 import { InventoryProvider, InventoryContext } from "./models/Inventory";
 import { PrinterProvider, PrinterContext } from "./models/Printer";
+import { ScannerProvider, ScannerContext } from "./models/Scanner";
 import "./App.css";
 
 const PartsWrapper = () => (
@@ -20,7 +21,13 @@ const InventoryWrapper = () => (
 );
 
 const PrinterWrapper = () => (
-  <PrinterContext>{(ctx) => <Printer printer={ctx} />}</PrinterContext>
+  <PrinterContext>
+    {(printer) => (
+      <ScannerContext>
+        {(scanner) => <Printer printer={printer} scanner={scanner} />}
+      </ScannerContext>
+    )}
+  </PrinterContext>
 );
 
 class App extends Component {
@@ -30,23 +37,25 @@ class App extends Component {
         <PartProvider>
           <InventoryProvider>
             <PrinterProvider>
-              <div>
-                <Navbar />
-
+              <ScannerProvider>
                 <div>
-                  <Switch>
-                    <Route exact path="/parts" component={PartsWrapper} />
-                    <Route
-                      exact
-                      path="/inventory"
-                      component={InventoryWrapper}
-                    />
-                    <Route exact path="/printer" component={PrinterWrapper} />
-                    <Route exact path="/" component={Home} />
-                    <Route component={NotFound} />
-                  </Switch>
+                  <Navbar />
+
+                  <div>
+                    <Switch>
+                      <Route exact path="/parts" component={PartsWrapper} />
+                      <Route
+                        exact
+                        path="/inventory"
+                        component={InventoryWrapper}
+                      />
+                      <Route exact path="/fleet" component={PrinterWrapper} />
+                      <Route exact path="/" component={Home} />
+                      <Route component={NotFound} />
+                    </Switch>
+                  </div>
                 </div>
-              </div>
+              </ScannerProvider>
             </PrinterProvider>
           </InventoryProvider>
         </PartProvider>
