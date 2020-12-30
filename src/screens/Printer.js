@@ -110,6 +110,29 @@ const ScannerCard = ({ id, name, redis, type }) => {
   );
 };
 
+const AsideLabel = ({ children }) => (
+  <Col
+    style={{
+      color: "grey",
+      borderRight: "3px solid lightgrey",
+      alignItems: "stretch",
+      justifyContent: "center",
+      margin: "15px 0px",
+    }}
+    md="1"
+  >
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      {children}
+    </div>
+  </Col>
+);
+
 export default ({ printer, scanner }) => {
   useEffect(() => printer.fetch(), []);
 
@@ -119,20 +142,30 @@ export default ({ printer, scanner }) => {
         <Loading />
       ) : (
         <>
-          <Row xs="3">
-            {printer.printer.map((x) => (
-              <PrinterCard
-                {...x}
-                inUse={printer.destination === x.redis}
-                setAsDefault={() => printer.setAsDefault(x)}
-                key={x.id}
-              />
-            ))}
+          <Row>
+            <AsideLabel>Printers</AsideLabel>
+            <Col>
+              <Row md="3">
+                {printer.printer.map((x) => (
+                  <PrinterCard
+                    {...x}
+                    inUse={printer.destination === x.redis}
+                    setAsDefault={() => printer.setAsDefault(x)}
+                    key={x.id}
+                  />
+                ))}
+              </Row>
+            </Col>
           </Row>
-          <Row xs="3">
-            {scanner.scanner.map((x) => (
-              <ScannerCard {...x} key={x.id} />
-            ))}
+          <Row>
+            <AsideLabel>Scanners</AsideLabel>
+            <Col>
+              <Row md="3">
+                {scanner.scanner.map((x) => (
+                  <ScannerCard {...x} key={x.id} />
+                ))}
+              </Row>
+            </Col>
           </Row>
         </>
       )}
