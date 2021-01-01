@@ -5,3 +5,4 @@ SQLAlchemy-Utils
 Flask-Script
 redis
 gunicorn
+psycopg2

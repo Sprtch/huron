@@ -1,10 +1,10 @@
 class Config(object):
     SECRET_KEY = 'REPLACE ME'
 
+
 class ProdConfig(Config):
     ENV = 'prod'
-    # SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost/huron'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:////var/db/database.db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost/sprtch'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CACHE_TYPE = 'simple'
@@ -15,8 +15,7 @@ class DevConfig(Config):
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     EXECUTOR_PROPAGATE_EXCEPTIONS = True
-
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../database.db'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres@localhost/sprtch'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     CACHE_TYPE = 'null'
