@@ -4,7 +4,7 @@ import Navbar from "./component/Navbar.js";
 import Home from "./screens/Home";
 import NotFound from "./screens/NotFound";
 import Inventory from "./screens/Inventory";
-import Printer from "./screens/Printer";
+import Fleet from "./screens/Fleet";
 import Parts from "./screens/Parts";
 import { PartProvider, PartContext } from "./models/Parts";
 import { InventoryProvider, InventoryContext } from "./models/Inventory";
@@ -20,11 +20,11 @@ const InventoryWrapper = () => (
   <InventoryContext>{(ctx) => <Inventory inventory={ctx} />}</InventoryContext>
 );
 
-const PrinterWrapper = () => (
+const FleetWrapper = () => (
   <PrinterContext>
     {(printer) => (
       <ScannerContext>
-        {(scanner) => <Printer printer={printer} scanner={scanner} />}
+        {(scanner) => <Fleet printer={printer} scanner={scanner} />}
       </ScannerContext>
     )}
   </PrinterContext>
@@ -49,7 +49,7 @@ class App extends Component {
                         path="/inventory"
                         component={InventoryWrapper}
                       />
-                      <Route exact path="/fleet" component={PrinterWrapper} />
+                      <Route exact path="/fleet" component={FleetWrapper} />
                       <Route exact path="/" component={Home} />
                       <Route component={NotFound} />
                     </Switch>
