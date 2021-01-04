@@ -29,6 +29,7 @@ const AsideLabel = ({ children }) => (
 
 export default ({ printer, scanner }) => {
   useEffect(() => printer.fetch(), []);
+  useEffect(() => scanner.fetch(), []);
 
   return (
     <Container>
