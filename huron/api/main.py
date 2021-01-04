@@ -170,15 +170,24 @@ def api_inventory():
         return jsonify([x.to_dict() for x in Inventory.query.all()])
 
 
+@api.route('/api/printer/<int:printer_id>', methods=['GET'])
+def api_printer_detail(scanner_id):
+    x = Printer.query.get(scanner_id)
+    if x is None:
+        return jsonify(None)
+
+    return jsonify(x.to_dict(full=True))
+
+
 @api.route('/api/printer/', methods=['GET'])
 def api_printer():
     if request.method == 'GET':
         return jsonify([x.to_dict() for x in Printer.query.all()])
 
 
-@api.route('/api/printer/<int:printer_id>', methods=['GET'])
-def api_printer_detail(scanner_id):
-    x = Printer.query.get(scanner_id)
+@api.route('/api/scanner/<int:scanner_id>', methods=['GET'])
+def api_scanner_detail(scanner_id):
+    x = Scanner.query.get(scanner_id)
     if x is None:
         return jsonify(None)
 
@@ -189,12 +198,3 @@ def api_printer_detail(scanner_id):
 def api_scanner():
     if request.method == 'GET':
         return jsonify([x.to_dict() for x in Scanner.query.all()])
-
-
-@api.route('/api/scanner/<int:scanner_id>', methods=['GET'])
-def api_scanner_detail(scanner_id):
-    x = Scanner.query.get(scanner_id)
-    if x is None:
-        return jsonify(None)
-
-    return jsonify(x.to_dict(full=True))
