@@ -171,8 +171,8 @@ def api_inventory():
 
 
 @api.route('/api/printer/<int:printer_id>', methods=['GET'])
-def api_printer_detail(scanner_id):
-    x = Printer.query.get(scanner_id)
+def api_printer_detail(printer_id):
+    x = Printer.query.get(printer_id)
     if x is None:
         return jsonify(None)
 
