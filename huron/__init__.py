@@ -7,7 +7,8 @@ from despinassy.db import db
 from huron.core.executor import executor
 from huron.api.main import api
 
-def create_app(object_name = 'huron.settings.DevConfig', log_file=None):
+
+def create_app(object_name='huron.settings.DevConfig', log_file=None):
     app = Flask(
         __name__,
         static_folder="view",
@@ -36,7 +37,7 @@ def create_app(object_name = 'huron.settings.DevConfig', log_file=None):
 
     @app.route('/static/<path:filename>')
     def serve_static(filename):
-        return send_from_directory(os.path.join('view', 'static'),   filename)       
+        return send_from_directory(os.path.join('view', 'static'), filename)
 
     @app.route('/')
     def index():
