@@ -1,11 +1,24 @@
 import React, { useState, createContext, useEffect } from "react";
 import axios from "axios";
 
+export const ScannerType = {
+  Undefined: 0,
+  Debug: 1,
+  Testing: 2,
+  Serial: 3,
+  USB: 4,
+};
+
+export const ScannerMode = {
+  Undefined: 0,
+  Print: 1,
+  Inventory: 2,
+};
+
 export const ScannerContext = createContext();
 
 export const ScannerProvider = (props) => {
   const [scanner, setScanner] = useState([]);
-  const [redis, setRedis] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const fetchScanner = () => {
@@ -15,9 +28,6 @@ export const ScannerProvider = (props) => {
       .then((response) => {
         setLoading(false);
         setScanner(response.data);
-        if (response.data.length) {
-          setRedis(response.data[0].redis);
-        }
       })
       .catch((err) => {
         console.error(err);
@@ -26,7 +36,19 @@ export const ScannerProvider = (props) => {
       });
   };
 
-  const setAsDefaultScanner = ({ redis }) => setRedis(redis);
+  const updateScanner = (id, value) =>
+    setScanner(scanner.map((x) => (x.id === id ? Object.assign(x, value) : x)));
+
+  const fetchScannerDetail = (id) => {
+    axios
+      .get(`/api/scanner/${id}`)
+      .then((response) => {
+        updateScanner(id, response.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   useEffect(() => fetchScanner(), []);
 
@@ -36,8 +58,7 @@ export const ScannerProvider = (props) => {
         scanner: scanner,
         loading: loading,
         fetch: fetchScanner,
-        destination: redis,
-        setAsDefault: setAsDefaultScanner,
+        fetchDetail: fetchScannerDetail,
         fetch: fetchScanner,
       }}
     >

@@ -57,7 +57,11 @@ export default ({ printer, scanner }) => {
             <Col>
               <Row md="3">
                 {scanner.scanner.map((x) => (
-                  <ScannerCard {...x} key={x.id} />
+                  <ScannerCard
+                    {...x}
+                    fetchDetail={scanner.fetchDetail}
+                    key={x.id}
+                  />
                 ))}
               </Row>
             </Col>
