@@ -1,6 +1,7 @@
 import React from "react";
 import { PrinterType, DialectType } from "../../models/Printer";
 import { Field, AvailableField } from "../Field";
+import { ExpandIcon } from "../Icon";
 import { timeSince } from "../../utils/datetime";
 import {
   Button,
@@ -10,6 +11,7 @@ import {
   CardTitle,
   CardSubtitle,
   CardBody,
+  CardFooter,
   ListGroup,
 } from "reactstrap";
 
@@ -80,7 +82,14 @@ export const PrinterCard = ({
             <Row>
               <Col>{`${name}`}</Col>
               <Col className="text-right">
-                <Button color="link" onClick={toggleDetail}>{`🔍`}</Button>
+                <Button
+                  outline={detail}
+                  style={{ marginRight: "-10px" }}
+                  color="link"
+                  onClick={toggleDetail}
+                >
+                  <ExpandIcon />
+                </Button>
               </Col>
             </Row>
           </CardTitle>
