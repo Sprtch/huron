@@ -11,14 +11,6 @@ import {
   ListGroup,
   ListGroupItem,
 } from "reactstrap";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Tooltip,
-  Table,
-} from "reactstrap";
 
 const AvailableField = ({ available }) => (
   <Col style={{ color: available ? "green" : "red" }}>
