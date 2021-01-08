@@ -1,5 +1,6 @@
 import React from "react";
 import { PrinterType, DialectType } from "../../models/Printer";
+import { Field, AvailableField } from "../Field";
 import { timeSince } from "../../utils/datetime";
 import {
   Button,
@@ -10,23 +11,7 @@ import {
   CardSubtitle,
   CardBody,
   ListGroup,
-  ListGroupItem,
 } from "reactstrap";
-
-const AvailableField = ({ available }) => (
-  <Col style={{ color: available ? "green" : "red" }}>
-    {`• ${available ? "connected" : "not connected"}`}
-  </Col>
-);
-
-const Field = ({ title, content }) => (
-  <ListGroupItem>
-    <Row>
-      <Col>{title}</Col>
-      <Col className="text-right">{content}</Col>
-    </Row>
-  </ListGroupItem>
-);
 
 export const PrinterCard = ({
   id,

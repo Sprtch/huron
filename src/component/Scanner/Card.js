@@ -1,5 +1,6 @@
 import React from "react";
 import { ScannerType, ScannerMode } from "../../models/Scanner";
+import { Field, AvailableField } from "../Field";
 import { timeSince } from "../../utils/datetime";
 import {
   Button,
@@ -10,7 +11,6 @@ import {
   CardSubtitle,
   CardBody,
   ListGroup,
-  ListGroupItem,
 } from "reactstrap";
 import {
   Modal,
@@ -119,21 +119,6 @@ const TransactionModal = ({ fetch, transactions }) => {
     </>
   );
 };
-
-const AvailableField = ({ available }) => (
-  <Col style={{ color: available ? "green" : "red" }}>
-    {`• ${available ? "connected" : "not connected"}`}
-  </Col>
-);
-
-const Field = ({ title, content }) => (
-  <ListGroupItem>
-    <Row>
-      <Col>{title}</Col>
-      <Col className="text-right">{content}</Col>
-    </Row>
-  </ListGroupItem>
-);
 
 export const ScannerCard = ({
   id,
