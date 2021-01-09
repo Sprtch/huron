@@ -1,7 +1,8 @@
 import React from "react";
 import { PrinterType, DialectType } from "../../models/Printer";
 import { Field, AvailableField } from "../Field";
-import { ExpandIcon } from "../Icon";
+import { CloseIcon, MoreIcon, ExpandIcon, PrintIcon } from "../Icon";
+import { TooltipButton } from "../Button";
 import { timeSince } from "../../utils/datetime";
 import {
   Button,
@@ -88,7 +89,7 @@ export const PrinterCard = ({
                   color="link"
                   onClick={toggleDetail}
                 >
-                  <ExpandIcon />
+                  <MoreIcon />
                 </Button>
               </Col>
             </Row>
@@ -122,13 +123,36 @@ export const PrinterCard = ({
               </>
             ) : null}
           </ListGroup>
-          <hr />
-          {inUse ? (
-            <Button disabled>{`This printer is already in use`}</Button>
-          ) : (
-            <Button onClick={setAsDefault}>{`Use this printer`}</Button>
-          )}
         </CardBody>
+        <CardFooter>
+          <Row>
+            <Col>
+              {inUse ? (
+                <TooltipButton
+                  disabled
+                  tooltip="Currently sending the print jobs to this printer"
+                >
+                  <>
+                    <CloseIcon />
+                    {` In use`}
+                  </>
+                </TooltipButton>
+              ) : (
+                <TooltipButton
+                  color="primary"
+                  onClick={setAsDefault}
+                  tooltip="Click to start sending your next print job to this printer"
+                >
+                  <>
+                    <PrintIcon />
+                    {` Print here`}
+                  </>
+                </TooltipButton>
+              )}
+            </Col>
+            <Col className="text-right"></Col>
+          </Row>
+        </CardFooter>
       </Card>
     </Col>
   );

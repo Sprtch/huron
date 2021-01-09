@@ -1,7 +1,8 @@
 import React from "react";
 import { ScannerType, ScannerMode } from "../../models/Scanner";
 import { Field, AvailableField } from "../Field";
-import { ExpandIcon } from "../Icon";
+import { MoreIcon, ExpandIcon } from "../Icon";
+import { TooltipButton } from "../Button";
 import { timeSince } from "../../utils/datetime";
 import {
   Button,
@@ -14,14 +15,7 @@ import {
   CardFooter,
   ListGroup,
 } from "reactstrap";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Tooltip,
-  Table,
-} from "reactstrap";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Table } from "reactstrap";
 
 const typeName = (x) => {
   switch (x) {
@@ -83,29 +77,18 @@ const TransactionTable = ({ fetch, transactions }) => {
 
 const TransactionModal = ({ fetch, transactions }) => {
   const [modal, setModal] = React.useState(false);
-  const [tooltipOpen, setTooltipOpen] = React.useState(false);
-
-  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
   const toggle = () => setModal(!modal);
 
   return (
     <>
-      <Button
-        color="light"
-        className="mr-2"
+      <TooltipButton
+        color="link"
         onClick={toggle}
-        id="Tooltip-add-part"
+        id="add-part"
+        tooltip="Show the transactions history for this scanner"
       >
-        Transactions
-      </Button>
-      <Tooltip
-        placement="top"
-        isOpen={tooltipOpen}
-        target="Tooltip-add-part"
-        toggle={toggleTooltip}
-      >
-        {"Check the transaction history for this scanner"}
-      </Tooltip>
+        <ExpandIcon />
+      </TooltipButton>
 
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
@@ -161,7 +144,7 @@ export const ScannerCard = ({
                   color="link"
                   onClick={toggleDetail}
                 >
-                  <ExpandIcon />
+                  <MoreIcon />
                 </Button>
               </Col>
             </Row>
@@ -194,12 +177,18 @@ export const ScannerCard = ({
               </>
             ) : null}
           </ListGroup>
-          <hr />
-          <TransactionModal
-            fetch={() => fetchDetail(id)}
-            transactions={transactions}
-          />
         </CardBody>
+        <CardFooter>
+          <Row>
+            <Col></Col>
+            <Col className="text-right">
+              <TransactionModal
+                fetch={() => fetchDetail(id)}
+                transactions={transactions}
+              />
+            </Col>
+          </Row>
+        </CardFooter>
       </Card>
     </Col>
   );
