@@ -1,9 +1,11 @@
 import React from "react";
-import { ScannerType, ScannerMode } from "../../models/Scanner";
+import { ScannerMode } from "../../models/Scanner";
 import { Field, AvailableField } from "../Field";
 import { MoreIcon, ExpandIcon } from "../Icon";
 import { TooltipButton } from "../Button";
 import { timeSince } from "../../utils/datetime";
+import { ScannerTransactionDetailTable } from "./Detail";
+import { modeName, typeName } from "./common";
 import {
   Button,
   Row,
@@ -15,65 +17,7 @@ import {
   CardFooter,
   ListGroup,
 } from "reactstrap";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Table } from "reactstrap";
-
-const typeName = (x) => {
-  switch (x) {
-    case ScannerType.Undefined:
-      return "Undefined";
-    case ScannerType.Debug:
-      return "'Debug'";
-    case ScannerType.Testing:
-      return "'testing'";
-    case ScannerType.Serial:
-      return "'Serial'";
-    case ScannerType.USB:
-      return "'USB'";
-  }
-};
-const modeName = (x) => {
-  switch (x) {
-    case ScannerMode.Print:
-      return "Print mode";
-    case ScannerMode.Inventory:
-      return "Inventory mode";
-    default:
-      return "Undefined";
-  }
-};
-
-const TransactionTable = ({ fetch, transactions }) => {
-  React.useEffect(() => fetch(), []);
-
-  if (!Array.isArray(transactions)) {
-    return null;
-  }
-
-  return (
-    <Table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Value</th>
-          <th>Mode</th>
-          <th>quantity</th>
-          <th>Moment</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((x) => (
-          <tr>
-            <th>{x.id}</th>
-            <th>{x.value}</th>
-            <th>{modeName(x.mode)}</th>
-            <th>{x.quantity}</th>
-            <th>{x.created_at}</th>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  );
-};
+import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
 const TransactionModal = ({ fetch, transactions }) => {
   const [modal, setModal] = React.useState(false);
@@ -93,7 +37,10 @@ const TransactionModal = ({ fetch, transactions }) => {
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
         <ModalBody>
-          <TransactionTable fetch={fetch} transactions={transactions} />
+          <ScannerTransactionDetailTable
+            fetch={fetch}
+            transactions={transactions}
+          />
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggle}>
