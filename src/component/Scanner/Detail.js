@@ -1,6 +1,7 @@
 import React from "react";
 import { modeName } from "./common";
-import { Table } from "reactstrap";
+import { Column } from "react-virtualized";
+import { TableWrapper } from "../Table";
 
 export const ScannerTransactionDetailTable = ({ fetch, transactions }) => {
   React.useEffect(() => fetch(), []);
@@ -10,27 +11,31 @@ export const ScannerTransactionDetailTable = ({ fetch, transactions }) => {
   }
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Value</th>
-          <th>Mode</th>
-          <th>quantity</th>
-          <th>Moment</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactions.map((x) => (
-          <tr>
-            <th>{x.id}</th>
-            <th>{x.value}</th>
-            <th>{modeName(x.mode)}</th>
-            <th>{x.quantity}</th>
-            <th>{x.created_at}</th>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <TableWrapper
+      size="40vh"
+      rows={transactions}
+      rowCount={transactions.length}
+      rowGetter={({ index }) => transactions[index]}
+    >
+      <Column label="#" dataKey="id" width={50} />
+      <Column
+        width="200"
+        label="Value"
+        dataKey="value"
+        style={{ display: "flex", alignItems: "center" }}
+      />
+      <Column
+        width="100"
+        label="Mode"
+        dataKey="mode"
+        cellRenderer={({ cellData }) => modeName(cellData)}
+      />
+      <Column
+        width="200"
+        label="Moment"
+        dataKey="created_at"
+        cellRenderer={({ cellData }) => cellData}
+      />
+    </TableWrapper>
   );
 };

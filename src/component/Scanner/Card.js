@@ -34,9 +34,9 @@ const TransactionModal = ({ fetch, transactions }) => {
         <ExpandIcon />
       </TooltipButton>
 
-      <Modal isOpen={modal} toggle={toggle}>
+      <Modal size="xl" isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
-        <ModalBody>
+        <ModalBody style={{ padding: "0" }}>
           <ScannerTransactionDetailTable
             fetch={fetch}
             transactions={transactions}

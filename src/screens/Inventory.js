@@ -61,11 +61,11 @@ const AddPartModal = ({ inventory, create }) => {
       >
         Select parts to add to the inventory
       </Tooltip>
-      <Modal size="lg" isOpen={modal} toggle={toggle}>
+      <Modal size="xl" isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>
           {"Create inventory entry for an existing part"}
         </ModalHeader>
-        <ModalBody>
+        <ModalBody style={{ padding: "0" }}>
           <PartContext.Consumer>
             {(ctx) => (
               <span>
