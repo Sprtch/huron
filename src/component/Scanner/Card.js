@@ -4,7 +4,7 @@ import { Field, AvailableField } from "../Field";
 import { MoreIcon, ExpandIcon } from "../Icon";
 import { TooltipButton } from "../Button";
 import { timeSince } from "../../utils/datetime";
-import { ScannerTransactionDetailTable } from "./Detail";
+import { ScannerTransactionDetail } from "./Detail";
 import { modeName, typeName } from "./common";
 import {
   Button,
@@ -37,10 +37,7 @@ const TransactionModal = ({ fetch, transactions }) => {
       <Modal size="xl" isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
         <ModalBody style={{ padding: "0" }}>
-          <ScannerTransactionDetailTable
-            fetch={fetch}
-            transactions={transactions}
-          />
+          <ScannerTransactionDetail fetch={fetch} transactions={transactions} />
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={toggle}>
