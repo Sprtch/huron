@@ -4,7 +4,15 @@ import { modeName } from "./common";
 import { Column } from "react-virtualized";
 import { TableWrapper } from "../Table";
 import { CardHeaderSearch } from "../Card";
-import { Button } from "reactstrap";
+import { Button, Container } from "reactstrap";
+
+const helpRowRenderer = () => {
+  return (
+    <Container style={{ padding: "15px", textAlign: "center", color: "grey" }}>
+      {"There is no transaction with this scanner device yet"}
+    </Container>
+  );
+};
 
 const ScannerTransactionDetailTable = ({ transactions }) => (
   <TableWrapper
@@ -12,6 +20,7 @@ const ScannerTransactionDetailTable = ({ transactions }) => (
     rows={transactions}
     rowCount={transactions.length}
     rowGetter={({ index }) => transactions[index]}
+    noRowsRenderer={helpRowRenderer}
   >
     <Column label="#" dataKey="id" width={50} />
     <Column
