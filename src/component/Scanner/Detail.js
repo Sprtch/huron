@@ -65,7 +65,7 @@ export const ScannerTransactionDetail = ({ fetch, transactions }) => {
         onChange={(ev) => setFilter(ev.target.value)}
       >
         <Button
-          className="mr-2"
+          className="mt-2 ml-2"
           onClick={toggleInventory}
           color={inventoryFilter ? "light" : "secondary"}
         >
@@ -74,7 +74,7 @@ export const ScannerTransactionDetail = ({ fetch, transactions }) => {
             : "Show Inventory Transaction"}
         </Button>
         <Button
-          className="mr-2"
+          className="mt-2 ml-2"
           onClick={togglePrinting}
           color={printingFilter ? "light" : "secondary"}
         >

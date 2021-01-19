@@ -1,26 +1,29 @@
 import React from "react";
 import { ExpandInput } from "../component/Input";
+import { Row, Col, Card, CardBody } from "reactstrap";
 
 export const CardHeader = (props) => (
   <div className="py-1 px-3">
-    <div className="card bg-primary">
-      <div className="card-body" style={props.style}>
-        <div className="row">{props.children}</div>
-      </div>
-    </div>
+    <Card color="primary">
+      <CardBody style={props.style}>
+        <Row>{props.children}</Row>
+      </CardBody>
+    </Card>
   </div>
 );
 
 export const CardHeaderSearch = (props) => (
   <CardHeader style={props.style}>
-    <div className="col">
+    <Col>
       <ExpandInput
         type="text"
         value={props.value}
         onChange={props.onChange}
         placeholder="Filter..."
       />
-    </div>
-    <div className="col-auto text-right">{props.children}</div>
+    </Col>
+    <Col md="auto" className="text-center">
+      {props.children}
+    </Col>
   </CardHeader>
 );
