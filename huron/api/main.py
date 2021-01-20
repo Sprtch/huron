@@ -1,7 +1,7 @@
 from huron.core.executor import executor
 from despinassy.ipc import redis_send_to_print, IpcPrintMessage, IpcOrigin
 from despinassy import Inventory, Part, Printer, Scanner, db
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app, send_file
+from flask import Blueprint, request, redirect, jsonify, current_app, send_file
 import os
 import redis
 
@@ -182,7 +182,9 @@ def api_printer_detail(printer_id):
 @api.route('/api/printer/', methods=['GET'])
 def api_printer():
     if request.method == 'GET':
-        return jsonify([x.to_dict() for x in Printer.query.all()])
+        return jsonify([
+            x.to_dict() for x in Printer.query.filter(Printer.hidden == False)
+        ])
 
 
 @api.route('/api/scanner/<int:scanner_id>', methods=['GET'])
@@ -197,4 +199,6 @@ def api_scanner_detail(scanner_id):
 @api.route('/api/scanner/', methods=['GET'])
 def api_scanner():
     if request.method == 'GET':
-        return jsonify([x.to_dict() for x in Scanner.query.all()])
+        return jsonify([
+            x.to_dict() for x in Scanner.query.filter(Scanner.hidden == False)
+        ])
