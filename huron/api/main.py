@@ -157,6 +157,14 @@ def api_inventory_detail(inventory_id):
         form = request.get_json()
         quantity = form.get('quantity', x.quantity)
         if quantity:
+            dev = Scanner.query.filter(Scanner.name == "huron").first()
+            db.session.add(
+                dev.add_transaction(
+                    mode=2,
+                    quantity=(quantity - x.quantity),
+                    value=x.part.barcode,
+                ))
+            db.session.commit()
             x.quantity = quantity
 
         db.session.commit()
