@@ -52,7 +52,7 @@ export const PartProvider = (props) => {
         },
       })
       .then((res) => {
-        setParts(parts.concat(res.data));
+        setParts((x) => x.concat(res.data));
       });
   };
 
