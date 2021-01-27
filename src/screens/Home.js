@@ -87,9 +87,11 @@ const CommandCard = ({ name, barcode }) => {
     <Col>
       <Card>
         <CardBody top width="100%">
+          <h5 className="text-center">{name}</h5>
           <Barcode className="text-center">{barcode}</Barcode>
           <p className="text-center">{barcode}</p>
         </CardBody>
+        <hr />
         <CardBody>
           <CardTitle tag="h5">{`${name}`}</CardTitle>
           <CardSubtitle style={{ color: "grey" }} tag="h6">
