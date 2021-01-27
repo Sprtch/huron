@@ -21,6 +21,8 @@ export const ScannerProvider = (props) => {
   const [scanner, setScanner] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const getScanner = (id) => scanner.find((x) => x.id === id);
+
   const fetchScanner = () => {
     setLoading(true);
     axios
@@ -37,7 +39,11 @@ export const ScannerProvider = (props) => {
   };
 
   const updateScanner = (id, value) =>
-    setScanner(scanner.map((x) => (x.id === id ? Object.assign(x, value) : x)));
+    setScanner((prevState) =>
+      getScanner(id)
+        ? prevState.map((x) => (x.id === id ? Object.assign(x, value) : x))
+        : prevState.concat(value)
+    );
 
   const fetchScannerDetail = (id) => {
     axios
@@ -55,7 +61,8 @@ export const ScannerProvider = (props) => {
   return (
     <ScannerContext.Provider
       value={{
-        scanner: scanner,
+        scanner: scanner.filter((x) => !x.hidden),
+        getId: getScanner,
         loading: loading,
         fetch: fetchScanner,
         fetchDetail: fetchScannerDetail,

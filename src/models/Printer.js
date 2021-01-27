@@ -60,7 +60,7 @@ export const PrinterProvider = (props) => {
   return (
     <PrinterContext.Provider
       value={{
-        printer: printer,
+        printer: printer.filter((x) => !x.hidden),
         loading: loading,
         fetch: fetchPrinter,
         fetchDetail: fetchPrinterDetail,

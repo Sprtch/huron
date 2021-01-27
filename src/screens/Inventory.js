@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PartContext } from "../models/Parts";
+import { ScannerContext } from "../models/Scanner";
+import { EyeSlash, ZoomIcon } from "../component/Icon";
 import { Loading } from "../component/Spinner";
 import { CardHeaderSearch } from "../component/Card";
 import { PlainInput } from "../component/Input";
 import { TableWrapper } from "../component/Table";
 import { RefreshButton } from "../component/Button";
+import { AvailableContent } from "../component/Field";
+import axios from "axios";
 import { Column } from "react-virtualized";
 import {
   Button,
@@ -140,6 +144,93 @@ const DownloadButton = () => {
   );
 };
 
+const TransactionDetailModal = ({ id }) => {
+  const [modal, setModal] = useState(false);
+  const [transactions, setTransactions] = useState([]);
+  const toggle = () => {
+    if (!modal)
+      axios
+        .get(`/api/inventory/${id}/transactions`)
+        .then((res) => setTransactions(res.data));
+
+    setModal(!modal);
+  };
+
+  useEffect(() => {
+    axios
+      .get(`/api/inventory/${id}/transactions`)
+      .then((res) => setTransactions(res.data));
+  }, []);
+
+  const OriginRenderer = ({ id, get, fetch }) => {
+    const scanner = get(id);
+    useEffect(() => (scanner ? null : fetch(id)), []);
+    return (
+      <span>
+        {scanner ? (
+          <span>
+            {scanner.name}{" "}
+            {!scanner.hidden ? (
+              <EyeSlash />
+            ) : (
+              <AvailableContent available={scanner.available} />
+            )}
+          </span>
+        ) : (
+          <Loading />
+        )}
+      </span>
+    );
+  };
+
+  return (
+    <span>
+      <Button color="primary" className="mr-2" onClick={toggle}>
+        <ZoomIcon />
+      </Button>
+      <Modal size="lg" isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>
+          {`Inventory transaction detail: ${id}`}
+        </ModalHeader>
+        <ModalBody style={{ padding: "0" }}>
+          <ScannerContext.Consumer>
+            {(scanner) => (
+              <span>
+                <TableWrapper
+                  size="40vh"
+                  rows={transactions}
+                  rowCount={transactions.length}
+                  rowGetter={({ index }) => transactions[index]}
+                >
+                  <Column
+                    width={300}
+                    label="Origin"
+                    dataKey="scanner"
+                    cellRenderer={({ cellData }) => (
+                      <OriginRenderer
+                        id={cellData}
+                        get={scanner.getId}
+                        fetch={scanner.fetchDetail}
+                      />
+                    )}
+                  />
+                  <Column label="Quantity" dataKey="quantity" width={100} />
+                  <Column label="Created At" dataKey="created_at" width={200} />
+                </TableWrapper>
+              </span>
+            )}
+          </ScannerContext.Consumer>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </span>
+  );
+};
+
 export default ({ inventory }) => {
   const [filter, setFilter] = useState("");
 
@@ -259,6 +350,14 @@ export default ({ inventory }) => {
                 }
                 quantity={cellData}
               />
+            )}
+          />
+          <Column
+            width={200}
+            label="Detail"
+            dataKey="id"
+            cellRenderer={({ cellData }) => (
+              <TransactionDetailModal id={cellData} />
             )}
           />
         </TableWrapper>

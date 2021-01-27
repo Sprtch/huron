@@ -1,6 +1,7 @@
 from huron.core.executor import executor
 from despinassy.ipc import redis_send_to_print, IpcPrintMessage, IpcOrigin
 from despinassy import Inventory, Part, Printer, Scanner, db
+from despinassy.Scanner import ScannerTransaction, ScannerModeEnum
 from flask import Blueprint, request, redirect, jsonify, current_app, send_file
 import os
 import redis
@@ -145,6 +146,19 @@ def api_inventory_export():
         path = os.path.join(SAVE_PATH, 'export.csv')
         Inventory.export_csv(path)
         return send_file(path, as_attachment=True)
+
+
+@api.route('/api/inventory/<int:inventory_id>/transactions', methods=['GET'])
+def api_inventory_detail_transaction(inventory_id):
+    x = Inventory.query.get(inventory_id)
+    if x is None:
+        return jsonify(None)
+
+    ts = ScannerTransaction.query.filter(
+        ScannerTransaction.value == x.part.barcode).filter(
+            ScannerTransaction.mode == ScannerModeEnum.INVENTORYMODE)
+
+    return jsonify([x.to_dict(full=True) for x in ts])
 
 
 @api.route('/api/inventory/<int:inventory_id>', methods=['GET', 'POST'])

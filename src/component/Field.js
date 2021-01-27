@@ -1,9 +1,15 @@
 import React from "react";
 import { Row, Col, ListGroupItem } from "reactstrap";
 
-export const AvailableField = ({ available }) => (
-  <Col style={{ color: available ? "green" : "red" }}>
+export const AvailableContent = ({ available }) => (
+  <span style={{ color: available ? "green" : "red" }}>
     {`• ${available ? "connected" : "not connected"}`}
+  </span>
+);
+
+export const AvailableField = ({ available }) => (
+  <Col>
+    <AvailableContent available={available} />
   </Col>
 );
 
