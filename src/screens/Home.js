@@ -123,31 +123,36 @@ export default () => {
       <ManualPrint />
       <h1>Commands Print</h1>
       <hr />
-      <h3>Commands to change mode</h3>
+      <details>
+        <summary>Commands to change mode</summary>
+        <hr />
+        <Row xs="3">
+          <CommandCard
+            name="Switch to Inventory Mode"
+            barcode="sprtchcmd:mode:inventory"
+          />
+          <CommandCard
+            name="Switch to Print Mode"
+            barcode="sprtchcmd:mode:print"
+          />
+          <CommandCard name="Clear Command" barcode="sprtchcmd:clear:0" />
+        </Row>
+      </details>
       <hr />
-      <Row xs="3">
-        <CommandCard
-          name="Switch to Inventory Mode"
-          barcode="sprtchcmd:mode:inventory"
-        />
-        <CommandCard
-          name="Switch to Print Mode"
-          barcode="sprtchcmd:mode:print"
-        />
-        <CommandCard name="Clear Command" barcode="sprtchcmd:clear:0" />
-      </Row>
+      <details>
+        <summary>Multiplier command</summary>
+        <hr />
+        <Row xs="3">
+          <CommandCard name="Multiplier x(-1)" barcode="sprtchcmd:negative:0" />
+        </Row>
+        <Row xs="3">
+          <CommandCard name="Multiplier x2" barcode="sprtchcmd:multiplier:2" />
+          <CommandCard name="Multiplier x3" barcode="sprtchcmd:multiplier:3" />
+          <CommandCard name="Multiplier x4" barcode="sprtchcmd:multiplier:4" />
+          <CommandCard name="Multiplier x5" barcode="sprtchcmd:multiplier:5" />
+        </Row>
+      </details>
       <hr />
-      <h3>Multiplier command</h3>
-      <hr />
-      <Row xs="3">
-        <CommandCard name="Multiplier x(-1)" barcode="sprtchcmd:negative:0" />
-      </Row>
-      <Row xs="3">
-        <CommandCard name="Multiplier x2" barcode="sprtchcmd:multiplier:2" />
-        <CommandCard name="Multiplier x3" barcode="sprtchcmd:multiplier:3" />
-        <CommandCard name="Multiplier x4" barcode="sprtchcmd:multiplier:4" />
-        <CommandCard name="Multiplier x5" barcode="sprtchcmd:multiplier:5" />
-      </Row>
     </Container>
   );
 };
