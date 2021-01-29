@@ -156,7 +156,8 @@ def api_inventory_detail_transaction(inventory_id):
 
     ts = ScannerTransaction.query.filter(
         ScannerTransaction.value == x.part.barcode).filter(
-            ScannerTransaction.mode == ScannerModeEnum.INVENTORYMODE)
+            ScannerTransaction.mode == ScannerModeEnum.INVENTORYMODE).order_by(
+                ScannerTransaction.created_at.desc())
 
     return jsonify([x.to_dict(full=True) for x in ts])
 
