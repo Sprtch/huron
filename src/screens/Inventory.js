@@ -170,7 +170,7 @@ const TransactionDetailModal = ({ id }) => {
         {scanner ? (
           <span>
             {scanner.name}{" "}
-            {!scanner.hidden ? (
+            {scanner.hidden ? (
               <EyeSlash />
             ) : (
               <AvailableContent available={scanner.available} />
