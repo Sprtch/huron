@@ -203,7 +203,7 @@ const TransactionDetailModal = ({ id }) => {
                   rowGetter={({ index }) => transactions[index]}
                 >
                   <Column
-                    width={300}
+                    width={200}
                     label="Origin"
                     dataKey="scanner"
                     cellRenderer={({ cellData }) => (
@@ -215,7 +215,7 @@ const TransactionDetailModal = ({ id }) => {
                     )}
                   />
                   <Column label="Quantity" dataKey="quantity" width={100} />
-                  <Column label="Created At" dataKey="created_at" width={200} />
+                  <Column label="Created At" dataKey="created_at" width={250} />
                 </TableWrapper>
               </span>
             )}
