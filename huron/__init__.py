@@ -1,12 +1,9 @@
 from flask import Flask, send_from_directory
-from sqlalchemy_utils import database_exists, create_database
-import logging
-import os
-
 from despinassy.db import db
-from despinassy.Scanner import Scanner, ScannerTypeEnum
 from huron.core.executor import executor
 from huron.api.main import api
+import logging
+import os
 
 
 def create_app(object_name='huron.settings.DevConfig', log_file=None):
@@ -28,15 +25,8 @@ def create_app(object_name='huron.settings.DevConfig', log_file=None):
     try:
         with app.app_context():
             db.create_all()
-            s = Scanner(type=ScannerTypeEnum.HURON,
-                        available=True,
-                        name="huron",
-                        settings="{}",
-                        hidden=True)
-            db.session.add(s)
-            db.session.commit()
-    except:
-        app.logger.error("Tables already exists")
+    except Exception as e:
+        app.logger.error("Tables already exists %s" % (str(e)))
 
     executor.init_app(app)
 
