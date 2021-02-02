@@ -72,12 +72,11 @@ const AddPartModal = ({ inventory, create }) => {
         <ModalBody style={{ padding: "0" }}>
           <PartContext.Consumer>
             {(ctx) => (
-              <span>
+              <>
                 <CardHeaderSearch
                   value={filter}
                   onChange={(ev) => setFilter(ev.target.value)}
                 />
-
                 <TableWrapper
                   size="40vh"
                   rows={exclude(
@@ -108,12 +107,12 @@ const AddPartModal = ({ inventory, create }) => {
                     )}
                   />
                 </TableWrapper>
-              </span>
+              </>
             )}
           </PartContext.Consumer>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>
+          <Button className="mt-3" color="primary" onClick={toggle}>
             Close
           </Button>
         </ModalFooter>
@@ -221,7 +220,7 @@ const TransactionDetailModal = ({ id }) => {
           </ScannerContext.Consumer>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>
+          <Button className="mt-3" color="primary" onClick={toggle}>
             Close
           </Button>
         </ModalFooter>
