@@ -90,7 +90,9 @@ export const TableWrapper = (props) => (
             height={height}
             headerHeight={30}
             rowStyle={rowRenderer}
-            rowHeight={width < 820 ? 100 : 50}
+            rowHeight={
+              props.rowHeight ? props.rowHeight : width < 820 ? 100 : 50
+            }
             {...props}
           />
         )}

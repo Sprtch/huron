@@ -195,29 +195,28 @@ const TransactionDetailModal = ({ id }) => {
         <ModalBody style={{ padding: "0" }}>
           <ScannerContext.Consumer>
             {(scanner) => (
-              <span>
-                <TableWrapper
-                  size="40vh"
-                  rows={transactions}
-                  rowCount={transactions.length}
-                  rowGetter={({ index }) => transactions[index]}
-                >
-                  <Column
-                    width={200}
-                    label="Origin"
-                    dataKey="scanner"
-                    cellRenderer={({ cellData }) => (
-                      <OriginRenderer
-                        id={cellData}
-                        get={scanner.getId}
-                        fetch={scanner.fetchDetail}
-                      />
-                    )}
-                  />
-                  <Column label="Quantity" dataKey="quantity" width={100} />
-                  <Column label="Created At" dataKey="created_at" width={250} />
-                </TableWrapper>
-              </span>
+              <TableWrapper
+                size="40vh"
+                rows={transactions}
+                rowCount={transactions.length}
+                rowGetter={({ index }) => transactions[index]}
+                rowHeight={50}
+              >
+                <Column
+                  width={200}
+                  label="Origin"
+                  dataKey="scanner"
+                  cellRenderer={({ cellData }) => (
+                    <OriginRenderer
+                      id={cellData}
+                      get={scanner.getId}
+                      fetch={scanner.fetchDetail}
+                    />
+                  )}
+                />
+                <Column label="Quantity" dataKey="quantity" width={100} />
+                <Column label="Created At" dataKey="created_at" width={250} />
+              </TableWrapper>
             )}
           </ScannerContext.Consumer>
         </ModalBody>
