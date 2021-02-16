@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ExpandInput } from "../component/Input";
+import { ExpandInput, PlainInput } from "../component/Input";
 import {
   Container,
   Row,
@@ -17,12 +17,25 @@ const ManualPrint = () => {
   const [name, setName] = useState("");
   const [barcode, setBarcode] = useState("");
   const [loading, setLoading] = useState(false);
+  const [number, setNumber] = React.useState(1);
+
+  const increase = () => {
+    setNumber(number + 1);
+  };
+  const decrease = () => {
+    if (number > 1) {
+      setNumber(number - 1);
+    }
+  };
+  const handleNumber = (ev) => {
+    setNumber(ev.target.value);
+  };
 
   const sendPrint = () => {
     if (!loading) {
       setLoading(true);
       setTimeout(() => setLoading(false), 1000);
-      axios.post("/api/print", { name, barcode }).then(() => {
+      axios.post("/api/print", { name, barcode, number }).then(() => {
         setName("");
         setBarcode("");
       });
@@ -33,22 +46,33 @@ const ManualPrint = () => {
     <Card body inverse color="info">
       <CardTitle tag="h5">Manual printing form</CardTitle>
 
-      <div className="row">
-        <div className="col">
+      <Row>
+        <Col>
           <ExpandInput
             type="text"
             value={name}
             onChange={(ev) => setName(ev.target.value)}
             placeholder="Enter Name..."
           />
-        </div>
-        <div className="col">
+        </Col>
+        <Col>
           <ExpandInput
             type="text"
             value={barcode}
             onChange={(ev) => setBarcode(ev.target.value)}
             placeholder="Enter barcode..."
           />
+        </Col>
+        <div className="col-auto text-right">
+          <div className="btn-group mr-2" role="group">
+            <Button color="secondary" onClick={decrease}>
+              -
+            </Button>
+            <PlainInput type="number" value={number} onChange={handleNumber} />
+            <Button color="secondary" onClick={increase}>
+              +
+            </Button>
+          </div>
         </div>
         <div className="col-auto text-right">
           <Button
@@ -67,7 +91,7 @@ const ManualPrint = () => {
             )}
           </Button>
         </div>
-      </div>
+      </Row>
     </Card>
   );
 };
