@@ -182,6 +182,16 @@ const TransactionDetailModal = ({ id }) => {
     );
   };
 
+  const noRowRenderer = () => {
+    return (
+      <Container
+        style={{ padding: "15px", textAlign: "center", color: "grey" }}
+      >
+        {"Still no inventory transaction for this part"}
+      </Container>
+    );
+  };
+
   return (
     <span>
       <Button color="primary" className="mr-2" onClick={toggle}>
@@ -200,6 +210,7 @@ const TransactionDetailModal = ({ id }) => {
                 rowCount={transactions.length}
                 rowGetter={({ index }) => transactions[index]}
                 rowHeight={50}
+                noRowsRenderer={noRowRenderer}
               >
                 <Column
                   width={200}
@@ -278,7 +289,9 @@ export default ({ inventory }) => {
 
   const helpRowRenderer = () => {
     return (
-      <Container style={{ padding: "15px", textAlign: "center" }}>
+      <Container
+        style={{ padding: "15px", textAlign: "center", color: "grey" }}
+      >
         {"There is no 'Parts' currently in the inventory."}
         <br />
         {"Click on the "}

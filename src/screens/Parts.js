@@ -211,7 +211,9 @@ export default ({ parts }) => {
 
   const helpRowRenderer = () => {
     return (
-      <Container style={{ padding: "15px", textAlign: "center" }}>
+      <Container
+        style={{ padding: "15px", textAlign: "center", color: "grey" }}
+      >
         {"There is no 'Parts' in the database."}
         <br />
         {"Click on the "}
