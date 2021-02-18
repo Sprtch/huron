@@ -38,12 +38,13 @@ const ManualPrint = () => {
       axios.post("/api/print", { name, barcode, number }).then(() => {
         setName("");
         setBarcode("");
+        setNumber(1);
       });
     }
   };
 
   return (
-    <Card body inverse color="info">
+    <Card body inverse color="secondary">
       <CardTitle tag="h5">Manual printing form</CardTitle>
 
       <Row>
@@ -65,31 +66,29 @@ const ManualPrint = () => {
         </Col>
         <div className="col-auto text-right">
           <div className="btn-group mr-2" role="group">
-            <Button color="secondary" onClick={decrease}>
+            <Button color="info" onClick={decrease}>
               -
             </Button>
             <PlainInput type="number" value={number} onChange={handleNumber} />
-            <Button color="secondary" onClick={increase}>
+            <Button color="info" onClick={increase}>
               +
             </Button>
+            <Button
+              onClick={sendPrint}
+              style={{ width: "95px", height: "35px" }}
+              color="primary"
+            >
+              {loading ? (
+                <div
+                  style={{ width: "15px", height: "15px" }}
+                  className="spinner-border"
+                  role="status"
+                />
+              ) : (
+                "Print"
+              )}
+            </Button>
           </div>
-        </div>
-        <div className="col-auto text-right">
-          <Button
-            onClick={sendPrint}
-            style={{ width: "95px", height: "35px" }}
-            color="secondary"
-          >
-            {loading ? (
-              <div
-                style={{ width: "15px", height: "15px" }}
-                className="spinner-border"
-                role="status"
-              />
-            ) : (
-              "Submit"
-            )}
-          </Button>
         </div>
       </Row>
     </Card>
