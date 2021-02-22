@@ -70,12 +70,12 @@ const rowRenderer = ({ index }) => {
   if (index < 0) return;
   if (index % 2) {
     return {
-      backgroundColor: "#ededed",
+      backgroundColor: "whitesmoke",
       color: "#333",
     };
   }
   return {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     color: "#333",
   };
 };

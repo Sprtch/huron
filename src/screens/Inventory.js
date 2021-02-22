@@ -69,7 +69,7 @@ const AddPartModal = ({ inventory, create }) => {
         <ModalHeader toggle={toggle}>
           {"Create inventory entry for an existing part"}
         </ModalHeader>
-        <ModalBody style={{ padding: "0" }}>
+        <ModalBody style={{ padding: "0", marginBottom: "12px" }}>
           <PartContext.Consumer>
             {(ctx) => (
               <>
