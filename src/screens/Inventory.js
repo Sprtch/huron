@@ -352,7 +352,7 @@ export default ({ inventory }) => {
           />
           <Column
             width={200}
-            label="Print"
+            label="Quantity"
             dataKey="quantity"
             cellRenderer={({ cellData, rowData }) => (
               <QuantityCell
