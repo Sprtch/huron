@@ -256,29 +256,21 @@ export default ({ inventory }) => {
               value={qquantity}
               onChange={(ev) => setQuantity(ev.target.value)}
             />
-            <button
-              type="button"
-              className="btn btn-secondary"
+            <Button
+              color="secondary"
               onClick={() => edit(qquantity).then(() => setEditing(false))}
             >
-              Save
-            </button>
-            <button
-              type="button"
-              className="btn btn-light"
-              onClick={() => setEditing(false)}
-            >
-              X
-            </button>
+              {"Save"}
+            </Button>
+            <Button color="light" onClick={() => setEditing(false)}>
+              {"X"}
+            </Button>
           </div>
         );
       } else {
         return (
-          <span>
-            {qquantity}{" "}
-            <button className="btn btn-link" onClick={() => setEditing(true)}>
-              edit
-            </button>
+          <span onClick={() => setEditing(true)}>
+            {qquantity} <Button color="link">{"edit"}</Button>
           </span>
         );
       }
