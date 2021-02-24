@@ -2,7 +2,10 @@
 
 ## Description
 
-A small server to interface a sticker label printer.
+Huron is a webapp designed to improve the supply chain workflow of company working
+with Odoo.
+It gives company the key to manage their fleet of barcode printer and barcode
+scanner to perform quick inventory of their assets or print barcode parts.
 
 ## Usage
 
