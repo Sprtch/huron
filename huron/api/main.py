@@ -1,6 +1,7 @@
 from huron.core.executor import executor
 from despinassy.ipc import redis_send_to_print, IpcPrintMessage, IpcOrigin
-from despinassy import Inventory, Part, Printer, Scanner, db
+from despinassy import Inventory, Part, Printer, Scanner, Channel, db
+from despinassy.Inventory import InventorySession
 from despinassy.Scanner import ScannerTransaction, ScannerModeEnum
 from flask import Blueprint, request, redirect, jsonify, current_app, send_file
 import os
@@ -136,8 +137,18 @@ def api_parts():
 def api_inventory_delete():
     if request.method == 'GET':
         Inventory.query.delete()
+        InventorySession.query.delete()
+        db.session.add(InventorySession())
         db.session.commit()
         return jsonify([x.to_dict() for x in Inventory.query.all()])
+
+
+@api.route('/api/inventory/archive', methods=['GET'])
+def api_inventory_archive():
+    if request.method == 'GET':
+        db.session.add(InventorySession())
+        db.session.commit()
+        return jsonify([x.to_dict() for x in InventorySession.query.all()])
 
 
 @api.route('/api/inventory/export.csv', methods=['GET'])
@@ -146,6 +157,16 @@ def api_inventory_export():
         path = os.path.join(SAVE_PATH, 'export.csv')
         Inventory.export_csv(path)
         return send_file(path, as_attachment=True)
+
+
+@api.route('/api/inventory/session/<int:session_id>', methods=['GET'])
+def api_inventory_session_list(session_id):
+    if request.method == 'GET':
+        sid = InventorySession.query.get(session_id)
+        return jsonify([
+            x.to_dict()
+            for x in Inventory.query.filter(Inventory.session == sid).all()
+        ])
 
 
 @api.route('/api/inventory/<int:inventory_id>/transactions', methods=['GET'])
@@ -191,7 +212,12 @@ def api_inventory_detail(inventory_id):
 @api.route('/api/inventory/', methods=['GET'])
 def api_inventory():
     if request.method == 'GET':
-        return jsonify([x.to_dict() for x in Inventory.query.all()])
+        last_session = InventorySession.query.order_by(
+            InventorySession.created_at.desc()).first()
+        return jsonify([
+            x.to_dict() for x in Inventory.query.filter(
+                Inventory.session == last_session).all()
+        ])
 
 
 @api.route('/api/printer/<int:printer_id>', methods=['GET'])
@@ -222,6 +248,14 @@ def api_scanner_detail(scanner_id):
 
 @api.route('/api/scanner/', methods=['GET'])
 def api_scanner():
+    if request.method == 'GET':
+        return jsonify([
+            x.to_dict() for x in Scanner.query.filter(Scanner.hidden == False)
+        ])
+
+
+@api.route('/api/channel/', methods=['GET', 'POST'])
+def api_channel():
     if request.method == 'GET':
         return jsonify([
             x.to_dict() for x in Scanner.query.filter(Scanner.hidden == False)
