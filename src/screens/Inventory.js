@@ -121,12 +121,16 @@ const AddPartModal = ({ inventory, create }) => {
   );
 };
 
-const DownloadButton = () => {
+const DownloadButton = ({ disabled }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
 
   const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
 
-  return (
+  return disabled ? (
+    <Button disabled color="light" className="mr-2">
+      {"📩"}
+    </Button>
+  ) : (
     <a href="/api/inventory/export.csv">
       <Button color="light" className="mr-2" id="Tooltip-download">
         {"📩"}
@@ -311,7 +315,7 @@ export default ({ inventory }) => {
         value={filter}
         onChange={(ev) => setFilter(ev.target.value)}
       >
-        <DownloadButton />
+        <DownloadButton disabled={inventory.inventory.length === 0} />
         <AddPartModal
           inventory={inventory.inventory}
           create={inventory.create}
