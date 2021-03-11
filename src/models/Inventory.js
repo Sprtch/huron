@@ -7,6 +7,29 @@ export const InventoryProvider = (props) => {
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const archiveInventory = () => {
+    setLoading(true);
+    axios
+      .get("/api/inventory/archive")
+      .then(() => {
+        setLoading(false);
+        setInventory([]);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+        setInventory([]);
+      });
+  };
+
+  const deleteInventoryDetail = (id) => {
+    axios.delete(`/api/inventory/${id}`).then(() => {
+      setInventory((inv) => {
+        inv.filter((x) => x.id !== id);
+      });
+    });
+  };
+
   const fetchInventory = () => {
     setLoading(true);
     axios
@@ -64,6 +87,8 @@ export const InventoryProvider = (props) => {
       value={{
         inventory: inventory,
         loadingInventory: loading,
+        archive: archiveInventory,
+        deleteId: deleteInventoryDetail,
         fetch: fetchInventory,
         filter: filterInventory,
         update: null,

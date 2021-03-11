@@ -184,7 +184,8 @@ def api_inventory_detail_transaction(inventory_id):
     return jsonify([x.to_dict(full=True) for x in ts])
 
 
-@api.route('/api/inventory/<int:inventory_id>', methods=['GET', 'POST'])
+@api.route('/api/inventory/<int:inventory_id>',
+           methods=['GET', 'POST', 'DELETE'])
 def api_inventory_detail(inventory_id):
     x = Inventory.query.get(inventory_id)
     if x is None:
@@ -204,6 +205,9 @@ def api_inventory_detail(inventory_id):
             db.session.commit()
             x.quantity = quantity
 
+        db.session.commit()
+    elif request.method == 'DELETE':
+        db.session.delete(x)
         db.session.commit()
 
     return jsonify(x.to_dict())
