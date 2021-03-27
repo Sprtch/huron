@@ -66,7 +66,7 @@ export const InventoryProvider = (props) => {
 
   const editInventory = ({ id, quantity }) =>
     axios
-      .post(`/api/inventory/${id}`, { quantity: parseInt(quantity) })
+      .post(`/api/inventory/${id}`, { quantity: parseFloat(quantity) })
       .then((_) => {
         setInventory(
           inventory.map((x) =>
