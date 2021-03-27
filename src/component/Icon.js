@@ -1,6 +1,6 @@
 import React from "react";
 
-gxport const CloseIcon = ({ style }) => (
+export const CloseIcon = ({ style }) => (
   <i style={style}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
