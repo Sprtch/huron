@@ -229,10 +229,7 @@ export default ({ parts }) => {
 
   return (
     <div>
-      <CardHeaderSearch
-        value={filter}
-        onChange={(ev) => setFilter(ev.target.value)}
-      >
+      <CardHeaderSearch value={filter} onChange={(x) => setFilter(x)}>
         <PartImportModal add={parts.add} />
         <BulkImportModal importCSV={parts.importCSV} />
         <RefreshButton refresh={parts.fetch}>
