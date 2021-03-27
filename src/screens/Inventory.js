@@ -301,7 +301,7 @@ export default ({ inventory }) => {
       return (
         <div className="btn-group mr-2" role="group" aria-label="invunit">
           <select value={uunit} onChange={(ev) => setUnit(ev.target.value)}>
-            <option value="u">{"pcs"}</option>
+            <option value="pcs">{"pcs"}</option>
             <option value="m">{"m"}</option>
             <option value="m³">{"m³"}</option>
           </select>
