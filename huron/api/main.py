@@ -193,7 +193,8 @@ def api_inventory_detail(inventory_id):
 
     if request.method == 'POST':
         form = request.get_json()
-        quantity = form.get('quantity', x.quantity)
+        quantity = form.get('quantity', None)
+        unit = form.get('unit', None)
         if quantity:
             dev = Scanner.query.filter(Scanner.name == "huron").first()
             db.session.add(
@@ -204,6 +205,8 @@ def api_inventory_detail(inventory_id):
                 ))
             db.session.commit()
             x.quantity = quantity
+        elif unit:
+            x.unit = unit
 
         db.session.commit()
     elif request.method == 'DELETE':

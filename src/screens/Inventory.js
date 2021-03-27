@@ -248,39 +248,81 @@ export default ({ inventory }) => {
   const [filter, setFilter] = useState("");
 
   const QuantityCell = ({ quantity, edit }) => {
-    const Quantity = ({ quantity }) => {
-      const [editing, setEditing] = useState(false);
-      const [qquantity, setQuantity] = useState(quantity);
+    const [editing, setEditing] = useState(false);
+    const [qquantity, setQuantity] = useState(quantity);
 
-      if (editing) {
-        return (
-          <div className="btn-group mr-2" role="group" aria-label="invquantity">
-            <PlainInput
-              type="number"
-              value={qquantity}
-              onChange={(ev) => setQuantity(ev.target.value)}
-            />
-            <Button
-              color="secondary"
-              onClick={() => edit(qquantity).then(() => setEditing(false))}
-            >
-              {"Save"}
-            </Button>
-            <Button color="light" onClick={() => setEditing(false)}>
-              {"X"}
-            </Button>
-          </div>
-        );
-      } else {
-        return (
-          <span onClick={() => setEditing(true)}>
-            {qquantity} <Button color="link">{"edit"}</Button>
-          </span>
-        );
+    if (editing) {
+      return (
+        <div className="btn-group mr-2" role="group" aria-label="invquantity">
+          <PlainInput
+            type="number"
+            value={qquantity}
+            onChange={(ev) => setQuantity(ev.target.value)}
+          />
+          <Button
+            color="secondary"
+            onClick={() => edit(qquantity).then(() => setEditing(false))}
+          >
+            {"Save"}
+          </Button>
+          <Button color="light" onClick={() => setEditing(false)}>
+            {"X"}
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <span onClick={() => setEditing(true)}>
+          {qquantity} <Button color="link">{"edit"}</Button>
+        </span>
+      );
+    }
+  };
+
+  const UnitCell = ({ unit, edit }) => {
+    const [editing, setEditing] = useState(false);
+    const [uunit, setUnit] = useState(unit);
+
+    const uTranslate = (x) => {
+      switch (x) {
+        case "m":
+          return 2;
+        case "m³":
+          return 3;
+        default:
+        case "u":
+          return 1;
       }
     };
 
-    return <Quantity quantity={quantity} />;
+    if (editing) {
+      return (
+        <div className="btn-group mr-2" role="group" aria-label="invunit">
+          <select value={uunit} onChange={(ev) => setUnit(ev.target.value)}>
+            <option value="u">{"pcs"}</option>
+            <option value="m">{"m"}</option>
+            <option value="m³">{"m³"}</option>
+          </select>
+          <Button
+            color="secondary"
+            onClick={() =>
+              edit(uTranslate(uunit)).then(() => setEditing(false))
+            }
+          >
+            {"Save"}
+          </Button>
+          <Button color="light" onClick={() => setEditing(false)}>
+            {"X"}
+          </Button>
+        </div>
+      );
+    } else {
+      return (
+        <span onClick={() => setEditing(true)}>
+          {uunit} <Button color="link">{"edit"}</Button>
+        </span>
+      );
+    }
   };
 
   const helpRowRenderer = () => {
@@ -355,6 +397,17 @@ export default ({ inventory }) => {
                   inventory.edit({ id: rowData.id, quantity })
                 }
                 quantity={cellData}
+              />
+            )}
+          />
+          <Column
+            width={150}
+            label="Unit"
+            dataKey="unit"
+            cellRenderer={({ cellData, rowData }) => (
+              <UnitCell
+                edit={(unit) => inventory.edit({ id: rowData.id, unit })}
+                unit={cellData}
               />
             )}
           />

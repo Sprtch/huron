@@ -64,16 +64,29 @@ export const InventoryProvider = (props) => {
       );
   };
 
-  const editInventory = ({ id, quantity }) =>
-    axios
-      .post(`/api/inventory/${id}`, { quantity: parseFloat(quantity) })
-      .then((_) => {
-        setInventory(
-          inventory.map((x) =>
-            x.id === id ? Object.assign(x, { quantity }) : x
-          )
-        );
-      });
+  const editInventory = ({ id, quantity, unit }) => {
+    if (quantity) {
+      return axios
+        .post(`/api/inventory/${id}`, { quantity: parseFloat(quantity) })
+        .then((_) => {
+          setInventory(
+            inventory.map((x) =>
+              x.id === id ? Object.assign(x, { quantity }) : x
+            )
+          );
+        });
+    } else if (unit) {
+      return axios
+        .post(`/api/inventory/${id}`, { unit: parseFloat(unit) })
+        .then((res) => {
+          setInventory(
+            inventory.map((x) =>
+              x.id === id ? Object.assign(x, { unit: res.data.unit }) : res.data
+            )
+          );
+        });
+    }
+  };
 
   const createInventory = (id) =>
     axios
