@@ -75,7 +75,7 @@ const AddPartModal = ({ inventory, create }) => {
               <>
                 <CardHeaderSearch
                   value={filter}
-                  onChange={(ev) => setFilter(ev.target.value)}
+                  onChange={(x) => setFilter(x)}
                 />
                 <TableWrapper
                   size="40vh"
@@ -311,10 +311,7 @@ export default ({ inventory }) => {
 
   return (
     <div>
-      <CardHeaderSearch
-        value={filter}
-        onChange={(ev) => setFilter(ev.target.value)}
-      >
+      <CardHeaderSearch value={filter} onChange={(x) => setFilter(x)}>
         <DownloadButton disabled={inventory.inventory.length === 0} />
         <AddPartModal
           inventory={inventory.inventory}
@@ -338,10 +335,12 @@ export default ({ inventory }) => {
           <Column
             width={200}
             label="Barcode"
+            dataKey="part"
             cellDataGetter={({ rowData }) => rowData.part.barcode}
             style={{ display: "flex", alignItems: "center" }}
           />
           <Column
+            dataKey="part"
             cellDataGetter={({ rowData }) => rowData.part.name}
             width={400}
             label="Name"
