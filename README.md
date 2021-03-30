@@ -4,8 +4,19 @@
 
 Huron is a webapp designed to improve the supply chain workflow of company working
 with Odoo.
-It gives company the key to manage their fleet of barcode printer and barcode
-scanner to perform quick inventory of their assets or print barcode parts.
+This webapp helps companies managing their fleet of barcode printer and barcode
+scanner with functionnality such as barcode printing assets and exporting an inventory
+of the warehouse or simply use it as an interface for the company barcode
+printer.
+
+Huron work in conjunction of the
+[sprtch/victoria](https://github.com/Sprtch/victoria) daemon that handle the
+comunication with the different barcode scanner as well as the
+[sprtch/erie](https://github.com/Sprtch/erie) daemon that receive the data from
+the barcode scanner.
+
+This program is made to run on the linux operating system running on a Raspberry
+Pi 3 built with [buildroot](https://github.com/Sprtch/buildroot).
 
 ## Usage
 
@@ -28,21 +39,19 @@ _react-app_ dev server.
 Developper access the UI through the create-react-app dev server and
 all the request will get proxyfied to the flask dev server.
 
+Running this program won't make the printer and the scanner work out of the
+box.
+The peripherals communicate together with the help of redis.
+Check the [sprtch/victoria](https://github.com/Sprtch/victoria) and
+[sprtch/erie](https://github.com/Sprtch/erie) project to make this
+webapp interface the scanner and printer.
+
 ## Deployment
 
-Build the deploy version of the application with the following command
+The production version and deployment is handled by 
+[buildroot](https://github.com/Sprtch/buildroot).
+Check the repository to see how Huron is deployed.
 
-```bash
-npm run build
-```
+## Useful links
 
-This command will make sure to move the builded webapp to the folder
-`huron/view` to be served statically with Flask.
-
-## Good things to know
-
-* You can check the cups configured printers at the following address `http://localhost:631/printers/`.
 * Use [labelary.com/viewer.html](http://labelary.com/viewer.html) to preview ZPL code.
-* CUPS article on Arch [wiki](https://wiki.archlinux.org/index.php/CUPS#Usage)
-* [Zebra and CUPS](https://www.zebra.com/us/en/support-downloads/knowledge-articles/mac-linux-or-unix-driver-suggestions-for-zebra-printers.html)
-* [Zebra ZD420](https://www.zebra.com/gb/en/products/printers/desktop/zd420-series-desktop-printers.html)
