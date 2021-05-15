@@ -122,8 +122,8 @@ def api_parts():
                 current_app.logger.info("Saving " + filename)
                 file.save(filename)
                 executor.submit(Part.import_csv, filename, {
-                    "default_code": "name",
-                    "barcode": "barcode"
+                    "Référence interne": "name",
+                    "Code Barre": "barcode"
                 })
 
             return jsonify({"response": "ok"})
