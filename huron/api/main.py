@@ -114,13 +114,13 @@ def api_parts():
             db.session.commit()
             return jsonify(part.to_dict())
         elif 'file' in files:
-            file = files['file']
-            if file.filename == '':
+            csv_file = files['file']
+            if csv_file.filename == '':
                 return redirect(request.url)
-            if file and is_csv(file.filename):
-                filename = os.path.join(SAVE_PATH, (file.filename))
+            if csv_file and is_csv(csv_file.filename):
+                filename = os.path.join(SAVE_PATH, (csv_file.filename))
                 current_app.logger.info("Saving " + filename)
-                file.save(filename)
+                csv_file.save(filename)
                 executor.submit(Part.import_csv, filename, {
                     "Référence interne": "name",
                     "Code Barre": "barcode"
