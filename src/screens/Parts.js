@@ -9,11 +9,21 @@ import { Column } from "react-virtualized";
 import {
   Button,
   Container,
+  Collapse,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
   Tooltip,
+  Row,
+  Col,
+} from "reactstrap";
+import { Form, FormGroup, Label, Input, FormText } from "reactstrap";
+import {
+  UncontrolledButtonDropdown,
+  DropdownMenu,
+  DropdownItem,
+  DropdownToggle,
 } from "reactstrap";
 
 const PartImportModal = ({ add }) => {
@@ -84,13 +94,23 @@ const PartImportModal = ({ add }) => {
 };
 
 const BulkImportModal = ({ importCSV }) => {
-  const [modal, setModal] = useState(false);
-  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const DEFAULT_HEADER_BARCODE = "Code Barre";
+  const DEFAULT_HEADER_NAME = "Référence interne";
 
-  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+  const [modal, setModal] = useState(false);
+  const [fileInput, setFileInput] = useState(null);
+  const [headersName, setHeadersName] = useState([]);
+
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [showOption, setShowOption] = useState(false);
+  const [withHeader, setWithHeader] = useState(true);
+  const [usedHeader, setUsedHeader] = useState({
+    barcode: DEFAULT_HEADER_BARCODE,
+    name: DEFAULT_HEADER_NAME,
+  });
 
   const send = (_) => {
-    importCSV(document.querySelector("#file").files[0])
+    importCSV(fileInput)
       .then((_) => {
         setModal(false);
       })
@@ -99,14 +119,53 @@ const BulkImportModal = ({ importCSV }) => {
       });
   };
 
-  const toggle = () => setModal(!modal);
+  const onFileInput = (e) => {
+    const parseCSV = (csv) => {
+      const arrayCSV = csv.split("\r\n");
+      if (withHeader) {
+        const headers = arrayCSV[0].split(",").map((x) => x.replace(/\"/g, ""));
+        if (headers.length < 2) {
+          console.error(
+            "Imported CSV has less than two column this error is not yet handled for the user"
+          );
+          return;
+        }
+
+        setUsedHeader({
+          barcode: headers.includes(DEFAULT_HEADER_BARCODE)
+            ? DEFAULT_HEADER_BARCODE
+            : headers[0],
+          name: headers.includes(DEFAULT_HEADER_NAME)
+            ? DEFAULT_HEADER_NAME
+            : headers[1],
+        });
+        setHeadersName(headers);
+      }
+    };
+
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = (evt) => {
+        parseCSV(evt.target.result);
+      };
+      setFileInput(file);
+    }
+  };
+
+  const toggleModal = () => setModal(!modal);
+
+  const MatchComponent = ({ match }) => (
+    <span style={{ color: match ? "green" : "red" }}>{"•"}</span>
+  );
 
   return (
     <span>
       <Button
         color="light"
         className="mr-2"
-        onClick={toggle}
+        onClick={toggleModal}
         id="Tooltip-import"
       >
         📂
@@ -115,30 +174,148 @@ const BulkImportModal = ({ importCSV }) => {
         placement="top"
         isOpen={tooltipOpen}
         target="Tooltip-import"
-        toggle={toggleTooltip}
+        toggle={() => setTooltipOpen(!tooltipOpen)}
       >
         Import part from .csv file
       </Tooltip>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalHeader toggle={toggle}>
+      <Modal isOpen={modal} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}>
           {"Bulk part import from .csv file"}
         </ModalHeader>
         <ModalBody>
-          <div className="form-inline">
+          <Form>
             <input type="hidden" name="barcode" />
             <input type="hidden" name="name" />
-            <div className="form-group mb-2">
-              <input id="file" type="file" name="file" />
+            <FormGroup row>
+              <Col>
+                <Input
+                  id="file"
+                  type="file"
+                  name="file"
+                  onChange={onFileInput}
+                />
+                <FormText color="muted">Add you part .csv here</FormText>
+              </Col>
+              <Col>
+                <Button
+                  color="primary"
+                  className="mb-2"
+                  disabled={fileInput === null}
+                  onClick={send}
+                >
+                  Submit
+                </Button>
+              </Col>
+            </FormGroup>
+          </Form>
+        </ModalBody>
+        <ModalBody>
+          <Button color="link" onClick={() => setShowOption(!showOption)}>
+            {showOption ? "▼" : "►"} Options
+          </Button>
+          <Collapse isOpen={showOption}>
+            <hr />
+            <legend>Header Setting</legend>
+            <div className="text-muted">
+              If your .csv file input contains the header information as the
+              first file this box should be checked
             </div>
-            <div className="form-group mb-2">
-              <Button color="primary" className="mb-2" onClick={send}>
-                Submit
-              </Button>
-            </div>
-          </div>
+            <FormGroup check inline className="m-3">
+              <Label check>
+                <Input
+                  type="checkbox"
+                  checked={withHeader}
+                  onChange={() => setWithHeader(!withHeader)}
+                />
+                Your .csv file contain an header line
+              </Label>
+            </FormGroup>
+            {fileInput && withHeader ? (
+              <div>
+                <legend>CSV column matching</legend>
+                <div className="text-muted">
+                  The .csv file you are sending should contain two information
+                  stored in two different columns: part name and part barcode.
+                  Here you can set which column of the .csv file you added
+                  contain those informations. If the column of your csv match
+                  the default column a green indicator will be put next to his
+                  name.
+                </div>
+                <Row
+                  className="m-3"
+                  style={{
+                    borderStyle: "solid",
+                    borderWidth: "1px",
+                    borderColor: "lightgray",
+                  }}
+                >
+                  <Col style={{ borderRight: "1px" }}>
+                    <div>Barcode column name</div>
+                    <hr />
+                    <div>
+                      <UncontrolledButtonDropdown>
+                        <DropdownToggle color="link" caret>
+                          <MatchComponent
+                            match={
+                              usedHeader.barcode === DEFAULT_HEADER_BARCODE
+                            }
+                          />{" "}
+                          {usedHeader.barcode}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                          {headersName.map((x) => (
+                            <DropdownItem
+                              onClick={() =>
+                                setUsedHeader((prevState) => ({
+                                  ...prevState,
+                                  barcode: x,
+                                }))
+                              }
+                              key={x}
+                            >
+                              {x}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </UncontrolledButtonDropdown>
+                    </div>
+                  </Col>
+                  <Col>
+                    <div>Part name column name</div>
+                    <hr />
+                    <div>
+                      <UncontrolledButtonDropdown>
+                        <DropdownToggle color="link" caret>
+                          <MatchComponent
+                            match={usedHeader.name === DEFAULT_HEADER_NAME}
+                          />{" "}
+                          {usedHeader.name}
+                        </DropdownToggle>
+                        <DropdownMenu>
+                          {headersName.map((x) => (
+                            <DropdownItem
+                              onClick={() =>
+                                setUsedHeader((prevState) => ({
+                                  ...prevState,
+                                  name: x,
+                                }))
+                              }
+                              key={x}
+                            >
+                              {x}
+                            </DropdownItem>
+                          ))}
+                        </DropdownMenu>
+                      </UncontrolledButtonDropdown>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            ) : null}
+          </Collapse>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>
+          <Button color="primary" onClick={toggleModal}>
             Close
           </Button>
         </ModalFooter>
