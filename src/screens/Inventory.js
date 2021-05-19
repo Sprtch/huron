@@ -112,7 +112,7 @@ const AddPartModal = ({ inventory, create }) => {
           </PartContext.Consumer>
         </ModalBody>
         <ModalFooter>
-          <Button className="mt-3" color="primary" onClick={toggle}>
+          <Button color="warning" onClick={toggle}>
             Close
           </Button>
         </ModalFooter>
@@ -235,7 +235,7 @@ const TransactionDetailModal = ({ id }) => {
           </ScannerContext.Consumer>
         </ModalBody>
         <ModalFooter>
-          <Button className="mt-3" color="primary" onClick={toggle}>
+          <Button color="warning" onClick={toggle}>
             Close
           </Button>
         </ModalFooter>

@@ -78,14 +78,18 @@ const PartImportModal = ({ add }) => {
               placeholder="Enter part name"
               onChange={(ev) => setName(ev.target.value)}
             />
-            <Button color="primary" onClick={send}>
-              Submit
-            </Button>
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggle}>
+          <Button color="warning" onClick={toggle}>
             Close
+          </Button>
+          <Button
+            color="primary"
+            disabled={!(name.length || barcode.length)}
+            onClick={send}
+          >
+            Submit
           </Button>
         </ModalFooter>
       </Modal>
@@ -325,15 +329,10 @@ const BulkImportModal = ({ importCSV }) => {
           </Collapse>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" onClick={toggleModal}>
+          <Button color="warning" onClick={toggleModal}>
             Close
           </Button>
-          <Button
-            color="primary"
-            className="mb-2"
-            disabled={fileInput === null}
-            onClick={send}
-          >
+          <Button color="primary" disabled={fileInput === null} onClick={send}>
             Submit
           </Button>
         </ModalFooter>
