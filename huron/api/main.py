@@ -114,6 +114,9 @@ def api_parts():
             db.session.commit()
             return jsonify(part.to_dict())
         elif 'file' in files:
+            column_name = form.get("csv_column_name", "Référence interne")
+            column_barcode = form.get("csv_column_barcode", "Code Barre")
+            csv_encoding = form.get("csv_encoding", "UTF-8")
             csv_file = files['file']
             if csv_file.filename == '':
                 return redirect(request.url)
@@ -122,9 +125,9 @@ def api_parts():
                 current_app.logger.info("Saving " + filename)
                 csv_file.save(filename)
                 executor.submit(Part.import_csv, filename, {
-                    "Référence interne": "name",
-                    "Code Barre": "barcode"
-                })
+                    "name": column_name,
+                    "barcode": column_barcode,
+                }, csv_encoding)
 
             return jsonify({"response": "ok"})
     else:

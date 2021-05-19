@@ -97,12 +97,17 @@ const BulkImportModal = ({ importCSV }) => {
   const DEFAULT_HEADER_BARCODE = "Code Barre";
   const DEFAULT_HEADER_NAME = "Référence interne";
 
-  const [modal, setModal] = useState(false);
+  // File
   const [fileInput, setFileInput] = useState(null);
   const [headersName, setHeadersName] = useState([]);
 
+  // UI
+  const [modal, setModal] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [showOption, setShowOption] = useState(false);
+
+  // Options
+  const [csvEncoding, setCsvEncoding] = useState("UTF-8");
   const [withHeader, setWithHeader] = useState(true);
   const [usedHeader, setUsedHeader] = useState({
     barcode: DEFAULT_HEADER_BARCODE,
@@ -228,6 +233,21 @@ const BulkImportModal = ({ importCSV }) => {
                   onChange={() => setWithHeader(!withHeader)}
                 />
                 Your .csv file contain an header line
+              </Label>
+            </FormGroup>
+            <legend>Encoding Setting</legend>
+            <div className="text-muted"></div>
+            <FormGroup>
+              <Label>
+                <Input
+                  type="select"
+                  value={csvEncoding}
+                  onChange={(e) => setCsvEncoding(e.target.value)}
+                >
+                  <option value="UTF-8">UTF-8</option>
+                  <option value="latin1">latin1</option>
+                </Input>
+                .csv encoding selection
               </Label>
             </FormGroup>
             {fileInput && withHeader ? (
