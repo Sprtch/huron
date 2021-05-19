@@ -56,9 +56,13 @@ export const PartProvider = (props) => {
       });
   };
 
-  const importPart = (file) => {
+  const importPart = (file, column_name, column_barcode, encoding) => {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("csv_column_name", column_name);
+    formData.append("csv_column_barcode", column_barcode);
+    formData.append("csv_encoding", encoding);
+
     return axios
       .post("/api/parts/", formData, {
         headers: {

@@ -115,7 +115,7 @@ const BulkImportModal = ({ importCSV }) => {
   });
 
   const send = (_) => {
-    importCSV(fileInput)
+    importCSV(fileInput, usedHeader.name, usedHeader.barcode, csvEncoding)
       .then((_) => {
         setModal(false);
       })
@@ -200,16 +200,6 @@ const BulkImportModal = ({ importCSV }) => {
                   onChange={onFileInput}
                 />
                 <FormText color="muted">Add you part .csv here</FormText>
-              </Col>
-              <Col>
-                <Button
-                  color="primary"
-                  className="mb-2"
-                  disabled={fileInput === null}
-                  onClick={send}
-                >
-                  Submit
-                </Button>
               </Col>
             </FormGroup>
           </Form>
@@ -335,8 +325,16 @@ const BulkImportModal = ({ importCSV }) => {
           </Collapse>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={toggleModal}>
+          <Button color="danger" onClick={toggleModal}>
             Close
+          </Button>
+          <Button
+            color="primary"
+            className="mb-2"
+            disabled={fileInput === null}
+            onClick={send}
+          >
+            Submit
           </Button>
         </ModalFooter>
       </Modal>
