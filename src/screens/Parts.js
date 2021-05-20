@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PrinterContext } from "../models/Printer";
 import { PlainInput } from "../component/Input";
 import { Loading } from "../component/Spinner";
@@ -128,7 +128,7 @@ const BulkImportModal = ({ importCSV }) => {
       });
   };
 
-  const onFileInput = (e) => {
+  useEffect(() => {
     const parseCSV = (csv) => {
       const arrayCSV = csv.split("\r\n");
       if (withHeader) {
@@ -152,14 +152,19 @@ const BulkImportModal = ({ importCSV }) => {
       }
     };
 
-    const file = e.target.files[0];
-    if (file) {
+    if (fileInput) {
       const reader = new FileReader();
-      reader.readAsText(file, "UTF-8");
+      reader.readAsText(fileInput, csvEncoding);
       reader.onload = (evt) => {
         parseCSV(evt.target.result);
       };
-      setFileInput(file);
+    }
+  }, [fileInput, csvEncoding]);
+
+  const onFileInput = (e) => {
+    const input = e.target.files[0];
+    if (input) {
+      setFileInput(input);
     }
   };
 
