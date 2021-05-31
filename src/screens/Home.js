@@ -109,7 +109,7 @@ const CommandCard = ({ name, barcode }) => {
   return (
     <Col>
       <Card>
-        <CardBody top width="100%">
+        <CardBody width="100%">
           <h5 className="text-center">{name}</h5>
           <Barcode className="text-center">{barcode}</Barcode>
           <p className="text-center">{barcode}</p>
