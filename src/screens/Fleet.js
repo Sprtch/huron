@@ -41,7 +41,7 @@ export default ({ printer, scanner }) => {
             <AsideLabel>Printers</AsideLabel>
             <Col>
               <Row md="3">
-                {printer.length ? (
+                {printer.printer && printer.printer.length ? (
                   printer.printer.map((x) => (
                     <PrinterCard
                       {...x}
@@ -51,7 +51,7 @@ export default ({ printer, scanner }) => {
                     />
                   ))
                 ) : (
-                  <Col className="text-center">
+                  <Col>
                     <h3 className="text-secondary mt-3">
                       No printer connected
                     </h3>
@@ -64,7 +64,7 @@ export default ({ printer, scanner }) => {
             <AsideLabel>Scanners</AsideLabel>
             <Col>
               <Row md="3">
-                {scanner.length ? (
+                {scanner.scanner && scanner.scanner.length ? (
                   scanner.scanner.map((x) => (
                     <ScannerCard
                       {...x}
@@ -73,7 +73,7 @@ export default ({ printer, scanner }) => {
                     />
                   ))
                 ) : (
-                  <Col className="text-center">
+                  <Col>
                     <h3 className="text-secondary mt-3">
                       No scanner connected
                     </h3>
