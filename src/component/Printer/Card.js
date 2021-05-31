@@ -1,9 +1,9 @@
 import React from "react";
-import { PrinterType, DialectType } from "../../models/Printer";
-import { Field, AvailableField } from "../Field";
-import { CloseIcon, MoreIcon, ExpandIcon, PrintIcon } from "../Icon";
-import { TooltipButton } from "../Button";
-import { timeSince } from "../../utils/datetime";
+import { PrinterType, DialectType } from "models/Printer";
+import { Field, AvailableField } from "component/Field";
+import { CloseIcon, MoreIcon, ExpandIcon, PrintIcon } from "component/Icon";
+import { TooltipButton } from "component/Button";
+import { timeSince } from "utils/datetime";
 import {
   Button,
   Row,

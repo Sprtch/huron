@@ -1,4 +1,4 @@
-import { ScannerType, ScannerMode } from "../../models/Scanner";
+import { ScannerType, ScannerMode } from "models/Scanner";
 
 export const typeName = (x) => {
   switch (x) {

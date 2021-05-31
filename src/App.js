@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Navbar from "./component/Navbar.js";
-import Home from "./screens/Home";
-import NotFound from "./screens/NotFound";
-import Inventory from "./screens/Inventory";
-import Fleet from "./screens/Fleet";
-import Parts from "./screens/Parts";
-import { PartProvider, PartContext } from "./models/Parts";
-import { InventoryProvider, InventoryContext } from "./models/Inventory";
-import { PrinterProvider, PrinterContext } from "./models/Printer";
-import { ScannerProvider, ScannerContext } from "./models/Scanner";
-import "./App.css";
+import Navbar from "component/Navbar.js";
+import Home from "screens/Home";
+import NotFound from "screens/NotFound";
+import Inventory from "screens/Inventory";
+import Fleet from "screens/Fleet";
+import { Parts } from "screens/Parts";
+import { PartProvider, PartContext } from "models/Parts";
+import { InventoryProvider, InventoryContext } from "models/Inventory";
+import { PrinterProvider, PrinterContext } from "models/Printer";
+import { ScannerProvider, ScannerContext } from "models/Scanner";
+import "App.css";
 
 const PartsWrapper = () => (
   <PartContext.Consumer>{(ctx) => <Parts parts={ctx} />}</PartContext.Consumer>

@@ -2,7 +2,7 @@ import React from "react";
 import { ExpandInput } from "../component/Input";
 import { Row, Col, Card, CardBody } from "reactstrap";
 import { Button } from "reactstrap";
-import { CloseIcon } from "../component/Icon";
+import { CloseIcon } from "component/Icon";
 
 export const CardHeader = (props) => (
   <div className="py-1 px-3">

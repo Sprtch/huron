@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { PrinterContext } from "../models/Printer";
-import { PlainInput } from "../component/Input";
-import { Loading } from "../component/Spinner";
-import { TableWrapper } from "../component/Table";
-import { CardHeaderSearch } from "../component/Card";
-import { RefreshButton } from "../component/Button";
+import { PrinterContext } from "models/Printer";
+import { PlainInput } from "component/Input";
+import { Loading } from "component/Spinner";
+import { TableWrapper } from "component/Table";
+import { CardHeaderSearch } from "component/Card";
+import { RefreshButton } from "component/Button";
 import { Column } from "react-virtualized";
 import {
   Button,

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { PartContext } from "../models/Parts";
-import { ScannerContext } from "../models/Scanner";
-import { EyeSlash, ZoomIcon } from "../component/Icon";
-import { Loading } from "../component/Spinner";
-import { CardHeaderSearch } from "../component/Card";
-import { PlainInput } from "../component/Input";
-import { TableWrapper } from "../component/Table";
-import { RefreshButton } from "../component/Button";
-import { AvailableContent } from "../component/Field";
+import { PartContext } from "models/Parts";
+import { ScannerContext } from "models/Scanner";
+import { EyeSlash, ZoomIcon } from "component/Icon";
+import { Loading } from "component/Spinner";
+import { CardHeaderSearch } from "component/Card";
+import { PlainInput } from "component/Input";
+import { TableWrapper } from "component/Table";
+import { RefreshButton } from "component/Button";
+import { AvailableContent } from "component/Field";
 import axios from "axios";
 import { Column } from "react-virtualized";
 import {

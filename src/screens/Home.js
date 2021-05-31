@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ExpandInput, PlainInput } from "../component/Input";
+import { ExpandInput, PlainInput } from "component/Input";
 import {
   Container,
   Row,
@@ -11,7 +11,7 @@ import {
   Button,
 } from "reactstrap";
 import axios from "axios";
-import { Barcode } from "../component/Barcode";
+import { Barcode } from "component/Barcode";
 
 const ManualPrint = () => {
   const [name, setName] = useState("");

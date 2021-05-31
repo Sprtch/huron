@@ -1,9 +1,9 @@
 import React from "react";
-import { ScannerMode } from "../../models/Scanner";
-import { Field, AvailableField } from "../Field";
-import { MoreIcon, ExpandIcon } from "../Icon";
-import { TooltipButton } from "../Button";
-import { timeSince } from "../../utils/datetime";
+import { ScannerMode } from "models/Scanner";
+import { Field, AvailableField } from "component/Field";
+import { MoreIcon, ExpandIcon } from "component/Icon";
+import { TooltipButton } from "component/Button";
+import { timeSince } from "utils/datetime";
 import { ScannerTransactionDetail } from "./Detail";
 import { modeName, typeName } from "./common";
 import {

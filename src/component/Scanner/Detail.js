@@ -1,9 +1,9 @@
 import React from "react";
-import { ScannerMode } from "../../models/Scanner";
+import { ScannerMode } from "models/Scanner";
 import { modeName } from "./common";
 import { Column } from "react-virtualized";
-import { TableWrapper } from "../Table";
-import { CardHeaderSearch } from "../Card";
+import { TableWrapper } from "component/Table";
+import { CardHeaderSearch } from "component/Card";
 import { Button, Container } from "reactstrap";
 
 const helpRowRenderer = () => {
