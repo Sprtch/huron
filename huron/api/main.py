@@ -26,6 +26,9 @@ def is_csv(filename):
 
 @api.route('/api/print', methods=['POST'])
 def api_print():
+    """
+    API endpoint to send print job to a remote printer.
+    """
     form = request.get_json()
     if form is None:
         form = request.form
@@ -58,6 +61,9 @@ def api_print():
 
 @api.route('/api/parts/<int:part_id>/createinventory', methods=['GET', 'POST'])
 def api_part_detail_create_inventory(part_id):
+    """
+    API endpoint to create and inventory table linked for a selected `part_id`.
+    """
     in_db = Part.query.get(part_id)
     if in_db is None:
         return jsonify({"response": "error"})
@@ -71,6 +77,9 @@ def api_part_detail_create_inventory(part_id):
 
 @api.route('/api/parts/<int:part_id>/print', methods=['GET', 'POST'])
 def api_part_detail_print(part_id):
+    """
+    API endpoint to print a selected part with `part_id`.
+    """
     number = 1
     destination = 'victoria'
     if request.method == 'POST':
@@ -103,6 +112,9 @@ def api_part_detail_print(part_id):
 
 @api.route('/api/parts/', methods=['GET', 'POST'])
 def api_parts():
+    """
+    API endpoint listing every parts present in the database.
+    """
     if request.method == 'POST':
         form = request.form
         files = request.files
@@ -138,6 +150,9 @@ def api_parts():
 
 @api.route('/api/inventory/delete', methods=['GET'])
 def api_inventory_delete():
+    """
+    API endroint to delete every inventory entry.
+    """
     if request.method == 'GET':
         Inventory.query.delete()
         InventorySession.query.delete()
@@ -148,6 +163,9 @@ def api_inventory_delete():
 
 @api.route('/api/inventory/archive', methods=['GET'])
 def api_inventory_archive():
+    """
+    API endroint to archive the current inventory session.
+    """
     if request.method == 'GET':
         db.session.add(InventorySession())
         db.session.commit()
@@ -156,6 +174,9 @@ def api_inventory_archive():
 
 @api.route('/api/inventory/export.csv', methods=['GET'])
 def api_inventory_export():
+    """
+    API endroint to export the current inventory session as .csv.
+    """
     if request.method == 'GET':
         path = os.path.join(SAVE_PATH, 'export.csv')
         Inventory.export_csv(path)
@@ -164,6 +185,9 @@ def api_inventory_export():
 
 @api.route('/api/inventory/session/<int:session_id>', methods=['GET'])
 def api_inventory_session_list(session_id):
+    """
+    API endpoint to list the inventory of a specific session identified by `session_id`.
+    """
     if request.method == 'GET':
         sid = InventorySession.query.get(session_id)
         return jsonify([
@@ -174,6 +198,9 @@ def api_inventory_session_list(session_id):
 
 @api.route('/api/inventory/<int:inventory_id>/transactions', methods=['GET'])
 def api_inventory_detail_transaction(inventory_id):
+    """
+    API endpoint to list the inventory of a specific session identified by `session_id`.
+    """
     x = Inventory.query.get(inventory_id)
     if x is None:
         return jsonify(None)
@@ -190,6 +217,9 @@ def api_inventory_detail_transaction(inventory_id):
 @api.route('/api/inventory/<int:inventory_id>',
            methods=['GET', 'POST', 'DELETE'])
 def api_inventory_detail(inventory_id):
+    """
+    API endpoint to retrieve the details of a inventory with `inventory_id`.
+    """
     x = Inventory.query.get(inventory_id)
     if x is None:
         return jsonify(None)
@@ -221,6 +251,9 @@ def api_inventory_detail(inventory_id):
 
 @api.route('/api/inventory/', methods=['GET'])
 def api_inventory():
+    """
+    API endpoint to list the inventory entry of the most recent inventory session.
+    """
     if request.method == 'GET':
         last_session = InventorySession.query.order_by(
             InventorySession.created_at.desc()).first()
@@ -232,6 +265,9 @@ def api_inventory():
 
 @api.route('/api/printer/<int:printer_id>', methods=['GET'])
 def api_printer_detail(printer_id):
+    """
+    API endpoint to retrieve the details of a printer identified by a `printer_id`.
+    """
     x = Printer.query.get(printer_id)
     if x is None:
         return jsonify(None)
@@ -241,6 +277,9 @@ def api_printer_detail(printer_id):
 
 @api.route('/api/printer/', methods=['GET'])
 def api_printer():
+    """
+    API endpoint to list the non hidden printers.
+    """
     if request.method == 'GET':
         return jsonify([
             x.to_dict() for x in Printer.query.filter(Printer.hidden == False)
@@ -249,6 +288,9 @@ def api_printer():
 
 @api.route('/api/scanner/<int:scanner_id>', methods=['GET'])
 def api_scanner_detail(scanner_id):
+    """
+    API endpoint to retrieve the details of a scanner identified by a `printer_id`.
+    """
     x = Scanner.query.get(scanner_id)
     if x is None:
         return jsonify(None)
@@ -258,15 +300,19 @@ def api_scanner_detail(scanner_id):
 
 @api.route('/api/scanner/', methods=['GET'])
 def api_scanner():
+    """
+    API endpoint to list the non hidden scanners.
+    """
     if request.method == 'GET':
         return jsonify([
             x.to_dict() for x in Scanner.query.filter(Scanner.hidden == False)
         ])
 
 
-@api.route('/api/channel/', methods=['GET', 'POST'])
+@api.route('/api/channel/', methods=['GET'])
 def api_channel():
+    """
+    API endpoint to list the communication channels.
+    """
     if request.method == 'GET':
-        return jsonify([
-            x.to_dict() for x in Scanner.query.filter(Scanner.hidden == False)
-        ])
+        return jsonify([x.to_dict() for x in Channel.query.all()])
