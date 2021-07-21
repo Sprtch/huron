@@ -56,7 +56,7 @@ export default ({ add }) => {
           </FormGroup>
           <FormGroup className="m-3">
             <Label>
-              <Input onChange={(ev) => setBarcode(ev.target.value)} />
+              <Input onChange={(ev) => setName(ev.target.value)} />
               Enter the part name
             </Label>
           </FormGroup>
