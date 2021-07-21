@@ -246,13 +246,12 @@ const TransactionDetailModal = ({ id }) => {
 
 export default ({ inventory }) => {
   const [filter, setFilter] = useState("");
-  const [editingQuantity, setEditingQuantity] = useState(false);
-  const [editingUnit, setEditingUnit] = useState(false);
 
   const QuantityCell = ({ quantity, edit }) => {
     const [qquantity, setQuantity] = useState(quantity);
+    const [editing, setEditing] = useState(false);
 
-    if (editingQuantity) {
+    if (editing) {
       return (
         <div className="btn-group mr-2" role="group" aria-label="invquantity">
           <PlainInput
@@ -262,20 +261,18 @@ export default ({ inventory }) => {
           />
           <Button
             color="secondary"
-            onClick={() =>
-              edit(qquantity).then(() => setEditingQuantity(false))
-            }
+            onClick={() => edit(qquantity).then(() => setEditing(false))}
           >
             {"Save"}
           </Button>
-          <Button color="light" onClick={() => setEditingQuantity(false)}>
+          <Button color="light" onClick={() => setEditing(false)}>
             {"X"}
           </Button>
         </div>
       );
     } else {
       return (
-        <span onClick={() => setEditingQuantity(true)}>
+        <span onClick={() => setEditing(true)}>
           {qquantity} <Button color="link">{"edit"}</Button>
         </span>
       );
@@ -284,6 +281,7 @@ export default ({ inventory }) => {
 
   const UnitCell = ({ unit, edit }) => {
     const [uunit, setUnit] = useState(unit);
+    const [editing, setEditing] = useState(false);
 
     const uTranslate = (x) => {
       switch (x) {
@@ -297,7 +295,7 @@ export default ({ inventory }) => {
       }
     };
 
-    if (editingUnit) {
+    if (editing) {
       return (
         <div className="btn-group mr-2" role="group" aria-label="invunit">
           <select value={uunit} onChange={(ev) => setUnit(ev.target.value)}>
@@ -308,19 +306,19 @@ export default ({ inventory }) => {
           <Button
             color="secondary"
             onClick={() =>
-              edit(uTranslate(uunit)).then(() => setEditingUnit(false))
+              edit(uTranslate(uunit)).then(() => setEditing(false))
             }
           >
             {"Save"}
           </Button>
-          <Button color="light" onClick={() => setEditingUnit(false)}>
+          <Button color="light" onClick={() => setEditing(false)}>
             {"X"}
           </Button>
         </div>
       );
     } else {
       return (
-        <span onClick={() => setEditingUnit(true)}>
+        <span onClick={() => setEditing(true)}>
           {uunit} <Button color="link">{"edit"}</Button>
         </span>
       );
