@@ -17,17 +17,19 @@ const PartsWrapper = () => (
 );
 
 const InventoryWrapper = () => (
-  <InventoryContext>{(ctx) => <Inventory inventory={ctx} />}</InventoryContext>
+  <InventoryContext.Consumer>
+    {(ctx) => <Inventory inventory={ctx} />}
+  </InventoryContext.Consumer>
 );
 
 const FleetWrapper = () => (
-  <PrinterContext>
+  <PrinterContext.Consumer>
     {(printer) => (
-      <ScannerContext>
+      <ScannerContext.Consumer>
         {(scanner) => <Fleet printer={printer} scanner={scanner} />}
-      </ScannerContext>
+      </ScannerContext.Consumer>
     )}
-  </PrinterContext>
+  </PrinterContext.Consumer>
 );
 
 class App extends Component {
