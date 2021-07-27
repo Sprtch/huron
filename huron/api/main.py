@@ -66,7 +66,12 @@ def api_part_detail_create_inventory(part_id):
     """
     in_db = Part.query.get(part_id)
     if in_db is None:
-        return jsonify({"response": "error"})
+        return jsonify({"response": "Unknown part id"})
+
+    if Inventory.last_session_entries().filter(
+            Inventory.part == in_db).count():
+        return jsonify(
+            {"response": "Inventory already exist for this part id"})
 
     i = Inventory(part=in_db, quantity=0)
     db.session.add(i)
@@ -133,6 +138,7 @@ def api_parts():
             if csv_file.filename == '':
                 return redirect(request.url)
             if csv_file and is_csv(csv_file.filename):
+                Inventory.archive()
                 filename = os.path.join(SAVE_PATH, (csv_file.filename))
                 current_app.logger.info("Saving " + filename)
                 csv_file.save(filename)
@@ -143,7 +149,9 @@ def api_parts():
 
             return jsonify({"response": "ok"})
     else:
-        return jsonify([x.to_dict() for x in Part.query.all()])
+        return jsonify([
+            x.to_dict() for x in Part.query.filter(Part.hidden == False).all()
+        ])
 
     return jsonify({"response": "error"})
 
@@ -229,6 +237,8 @@ def api_inventory_detail(inventory_id):
         quantity = form.get('quantity', None)
         unit = form.get('unit', None)
         if quantity:
+            # Since the webapp is a special kind of scanner device we add
+            # the transaction for inventory modification from here.
             dev = Scanner.query.filter(Scanner.name == "huron").first()
             db.session.add(
                 dev.add_transaction(
