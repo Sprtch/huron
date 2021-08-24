@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { PrinterCard } from "component/Printer";
-import { ScannerCard } from "component/Scanner";
+import { PrinterCard } from "screens/Printer";
+import { ScannerCard } from "screens/Scanner";
 import { Loading } from "component/Spinner";
 import { Row, Col, Container } from "reactstrap";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { PrinterType, DialectType } from "models/Printer";
-import { PrinterTransactionDetail } from "component/Printer/Detail";
+import { PrinterTransactionDetail } from "./Detail";
 import { Field, AvailableField } from "component/Field";
 import { CloseIcon, MoreIcon, ExpandIcon, PrintIcon } from "component/Icon";
 import { TooltipButton } from "component/Button";
