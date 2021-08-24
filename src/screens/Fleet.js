@@ -47,6 +47,7 @@ export default ({ printer, scanner }) => {
                       {...x}
                       inUse={printer.destination === x.redis}
                       setAsDefault={() => printer.setAsDefault(x)}
+                      fetchDetail={printer.fetchDetail}
                       key={x.id}
                     />
                   ))

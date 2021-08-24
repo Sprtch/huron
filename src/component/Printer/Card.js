@@ -1,5 +1,6 @@
 import React from "react";
 import { PrinterType, DialectType } from "models/Printer";
+import { PrinterTransactionDetail } from "component/Printer/Detail";
 import { Field, AvailableField } from "component/Field";
 import { CloseIcon, MoreIcon, ExpandIcon, PrintIcon } from "component/Icon";
 import { TooltipButton } from "component/Button";
@@ -14,7 +15,41 @@ import {
   CardBody,
   CardFooter,
   ListGroup,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap";
+
+const TransactionModal = ({ fetch, transactions }) => {
+  const [modal, setModal] = React.useState(false);
+  const toggle = () => setModal(!modal);
+
+  return (
+    <>
+      <TooltipButton
+        color="link"
+        onClick={toggle}
+        id="add-part"
+        tooltip="Show the transactions history for this scanner"
+      >
+        <ExpandIcon />
+      </TooltipButton>
+
+      <Modal size="xl" isOpen={modal} toggle={toggle}>
+        <ModalHeader toggle={toggle}>{"Create new single part"}</ModalHeader>
+        <ModalBody style={{ padding: "0" }}>
+          <PrinterTransactionDetail fetch={fetch} transactions={transactions} />
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={toggle}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </>
+  );
+};
 
 export const PrinterCard = ({
   id,
@@ -29,7 +64,9 @@ export const PrinterCard = ({
   settings,
   updated_at,
   created_at,
+  transactions,
   setAsDefault,
+  fetchDetail,
 }) => {
   const [detail, setDetail] = React.useState(false);
   const toggleDetail = () => setDetail(!detail);
@@ -150,7 +187,12 @@ export const PrinterCard = ({
                 </TooltipButton>
               )}
             </Col>
-            <Col className="text-right"></Col>
+            <Col className="text-right">
+              <TransactionModal
+                fetch={() => fetchDetail(id)}
+                transactions={transactions}
+              />
+            </Col>
           </Row>
         </CardFooter>
       </Card>
