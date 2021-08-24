@@ -23,15 +23,15 @@ const PrinterTransactionDetailTable = ({ transactions }) => (
     <Column label="#" dataKey="id" width={50} />
     <Column
       width="200"
-      label="Value"
+      label="Barcode"
       dataKey="barcode"
       style={{ display: "flex", alignItems: "center" }}
     />
     <Column
-      width="100"
-      label="Mode"
+      width="300"
+      label="Name"
       dataKey="name"
-      cellRenderer={({ cellData }) => modeName(cellData)}
+      style={{ display: "flex", alignItems: "center" }}
     />
     <Column
       width="200"
