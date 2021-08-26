@@ -292,7 +292,8 @@ def api_printer():
     """
     if request.method == 'GET':
         return jsonify([
-            x.to_dict() for x in Printer.query.filter(Printer.hidden == False)
+            x.to_dict() for x in Printer.query.filter(
+                Printer.hidden == False).order_by(Printer.id)
         ])
 
 

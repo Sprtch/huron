@@ -28,7 +28,7 @@ export const PrinterProvider = (props) => {
       .then((response) => {
         setLoading(false);
         setPrinter(response.data);
-        if (response.data.length) {
+        if (response.data.length && redis === null) {
           setRedis(response.data[0].redis);
         }
       })
